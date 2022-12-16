@@ -1,0 +1,7 @@
+---
+
+- name: Config de base sur les machines linux
+  hosts: base
+  roles:
+    - gantsign.oh-my-zsh
+    - base

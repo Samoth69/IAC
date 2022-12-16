@@ -1,0 +1,30 @@
+---
+
+- name: check if usefull tools are installed
+  become: yes
+  package:
+    name:
+      - htop
+      - curl
+      - nano
+    state: latest
+
+# copié collé de https://github.com/gantsign/ansible-role-oh-my-zsh/blob/master/tasks/install.yml#L52
+# permet de ré-écrire le template de oh my zsh pour être 100% raccord avec ce que je veux
+- name: Ré-écriture du fichier .zshrc
+  become: yes
+  become_user: '{{ user.username }}'
+  template:
+    src: zshrc.j2
+    dest: '~{{ user.username }}/.zshrc'
+    backup: yes
+    mode: 'u=rw,go=r'
+  with_items: '{{ users }}'
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: '{{ user.username }}'
+
+- name: Défini la bonne timezone
+  timezone:
+    name: Europe/Paris
