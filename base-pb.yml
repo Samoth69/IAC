@@ -1,13 +1,19 @@
 ---
 
-- name: Config de base sur les machines linux
-  become: yes
-  hosts: base
-  roles:
-    - gantsign.oh-my-zsh
-    - base
+# - name: Config de base sur les machines linux
+#   become: yes
+#   hosts: base
+#   roles:
+#     - gantsign.oh-my-zsh
+#     - base
 
-- name: install auto update
-  hosts: auto_update
+# - name: install auto update
+#   hosts: auto_update
+#   roles:
+#     - auto_update
+
+- name: seafile server
+  hosts: seafile_server
+  become: yes
   roles:
-    - auto_update
+    - seafile_server

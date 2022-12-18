@@ -1,0 +1,60 @@
+---
+
+- name: seafile internal network
+  community.docker.docker_network:
+    name: "{{ seafile_internal_network_name }}"
+
+- name: maria-db docker
+  community.docker.docker_container:
+    name: seafile-mariadb
+    image: mariadb:10.5
+    restart_policy: unless-stopped
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ lookup('env', 'INFRA_SEAFILE_DB_PASSWORD') }}"
+      MYSQL_LOG_CONSOLE: "true"
+    networks:
+      - name: "{{ seafile_internal_network_name }}"
+    volumes:
+      - "{{ seafile_database_path }}"
+
+- name: memcached docker
+  community.docker.docker_container:
+    name: seafile-memcached
+    image: memcached:1.6
+    entrypoint:
+      - memcached
+      - -m
+      - "256"
+    restart_policy: unless-stopped
+    networks:
+      - name: "{{ seafile_internal_network_name }}"
+        aliases: memcached
+  
+- name: seafile docker
+  community.docker.docker_container:
+    name: seafile-server
+    image: seafileltd/seafile-mc:latest
+    exposed_ports:
+      - 80
+    volumes:
+      - "{{ seafile_storage_path }}"
+    networks:
+      - name: "{{ seafile_internal_network_name }}"
+      - name: "{{ seafile_traefik_docker_network_name }}"
+    env:
+      DB_HOST: "seafile-mariadb"
+      DB_ROOT_PASSWD: "{{ lookup('env', 'INFRA_SEAFILE_DB_PASSWORD') }}"
+      TIME_ZONE: "Europe/Paris"
+      SEAFILE_ADMIN_EMAIL: "{{ lookup('env', 'INFRA_SEAFILE_ADMIN_EMAIL') }}"
+      SEAFILE_ADMIN_PASSWORD: "{{ lookup('env', 'INFRA_SEAFILE_ADMIN_PASSWORD') }}"
+      SEAFILE_SERVER_LETSENCRYPT: "false"
+    labels:
+      traefik.enable: "true" 
+      traefik.http.routers.web.rule: "Host(`{{ seafile_subdomain_name }}.samoth.eu`)"
+      traefik.http.routers.web.entrypoints: "websecure"
+      traefik.http.routers.web.tls.certresolver: "myresolver"
+      traefik.http.services.web.loadbalancer.server.port: "80"
+      traefik.docker.network: "{{ seafile_traefik_docker_network_name }}"
+      traefik.http.middlewares.web.ratelimit.average: "100"
+      traefik.http.middlewares.web.ratelimit.burst: "200"
+    

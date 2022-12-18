@@ -4,3 +4,6 @@ localhost   ansible_connection=local
 192.168.0.18
 192.168.0.24
 vps.samoth.eu   ansible_port=31958
+
+[seafile_server]
+vps.samoth.eu   ansible_port=31958

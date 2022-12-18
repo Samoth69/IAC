@@ -26,3 +26,22 @@ users:
 
 # chemin fichier de conf unattended upgrade
 auto_update_config_path: /etc/apt/apt.conf.d/20auto-upgrades
+
+#-----------------------
+# seafile_server
+#-----------------------
+
+# nom network docker
+seafile_internal_network_name: "seafile-net"
+
+# chemin bdd
+seafile_database_path: "/opt/seafile-mysql/db:/var/lib/mysql"
+
+# chemin fichier seafile
+seafile_storage_path: "/opt/seafile-data:/shared"
+
+# config traefik de seafile
+# nom du sous domaine du load balancer
+seafile_subdomain_name: "seafile"
+
+seafile_traefik_docker_network_name: "traefik_traefik"
