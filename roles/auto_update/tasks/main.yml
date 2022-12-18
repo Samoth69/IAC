@@ -1,0 +1,14 @@
+---
+
+- name: checking if unattended-upgrades is installed
+  become: yes
+  package:
+    name:
+      - unattended-upgrades
+  state: latest
+
+- name: copy unattended config
+  become: yes
+  template:
+    src: 20auto-upgrades.j2
+    dest: {{auto_update_config_path}}

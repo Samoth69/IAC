@@ -19,3 +19,10 @@ oh_my_zsh_install: yes
 users:
   - username: thomas
   - username: root
+
+#-----------------------
+# unattended-upgrades
+#-----------------------
+
+# chemin fichier de conf unattended upgrade
+auto_update_config_path: /etc/apt/apt.conf.d/20auto-upgrades

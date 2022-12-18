@@ -5,3 +5,8 @@
   roles:
     - gantsign.oh-my-zsh
     - base
+
+- name: install auto update
+  hosts: auto_update
+  roles:
+    - auto_update
