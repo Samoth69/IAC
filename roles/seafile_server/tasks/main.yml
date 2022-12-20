@@ -34,6 +34,7 @@
   community.docker.docker_container:
     name: seafile-server
     image: seafileltd/seafile-mc:latest
+    restart_policy: unless-stopped
     exposed_ports:
       - 80
     volumes:
