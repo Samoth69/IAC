@@ -1,0 +1,7 @@
+---
+
+- name: seafile server
+  hosts: seafile_server
+  become: yes
+  roles:
+    - seafile_server

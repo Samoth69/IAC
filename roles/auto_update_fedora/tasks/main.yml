@@ -1,0 +1,13 @@
+---
+
+- name: check if dnf-automatic is installed
+  package:
+    name:
+      - dnf-automatic
+    state: latest
+
+- name: enable and start dnf-automatic-install service
+  systemd:
+    state: started
+    enabled: yes
+    name: dnf-automatic-install.timer

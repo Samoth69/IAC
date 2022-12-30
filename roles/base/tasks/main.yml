@@ -28,3 +28,16 @@
 - name: Défini la bonne timezone
   timezone:
     name: Europe/Paris
+
+- name: Désactiver cockpit au démarrage
+  ignore_errors: true # cette étape peut planter si le service a déjà été enlevé
+  systemd:
+    state: stopped
+    enabled: false
+    name: cockpit.socket
+
+- name: Supprimer cockpit si présent
+  package:
+    name:
+      - cockpit
+    state: absent
