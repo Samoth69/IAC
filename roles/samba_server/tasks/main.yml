@@ -1,0 +1,19 @@
+---
+
+- name: install samba
+  package:
+    name:
+      - samba
+    state: latest
+
+- name: firewall for samba
+  ansible.posix.firewalld:
+    zone: public
+    state: enabled
+    permanent: yes
+    service: samba
+
+- name: reload service firewalld
+  systemd:
+    name: firewalld
+    state: reloaded

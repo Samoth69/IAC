@@ -1,0 +1,7 @@
+---
+
+- name: samba server install
+  hosts: samba_server
+  become: yes
+  roles:
+    - samba_server

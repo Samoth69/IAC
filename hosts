@@ -12,3 +12,6 @@ vps.samoth.eu   ansible_port=31958
 [auto_update_fedora]
 192.168.0.24
 192.168.0.146
+
+[samba_server]
+192.168.0.146
