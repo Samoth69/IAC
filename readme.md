@@ -6,4 +6,5 @@ Ansible powered, run from windows WSL.
 ansible-galaxy install gantsign.oh-my-zsh
 ansible-galaxy collection install community.docker
 ansible-galaxy collection install ansible.posix
+ansible-galaxy collection install containers.podman
 ```

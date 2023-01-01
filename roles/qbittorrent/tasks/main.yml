@@ -1,0 +1,28 @@
+- import_tasks: firewall.yml
+
+- name: pulling containers images
+  containers.podman.podman_image:
+    name: "{{ item }}"
+  loop:
+    - docker.io/linuxserver/qbittorrent
+
+- name: setup qbittorrent container
+  containers.podman.podman_container:
+    name: "{{ qbt_container_name }}"
+    image: linuxserver/qbittorrent
+    state: started
+    restart_policy: always
+    recreate: yes
+    env:
+      PUID: "{{ qbt_user }}"
+      PGID: "{{ qbt_group }}"
+      TZ: "{{ qbt_tz }}"
+      WEBUI_PORT: "{{ qbt_internal_webui_port }}"
+    expose: "{{ qbt_internal_webui_port }}"
+    volumes:
+      - "{{ qbt_config_path }}:/config"
+      - "{{ qbt_torrent_path }}:/downloads"
+    ports:
+      - "{{ qbt_listening_port }}:{{ qbt_listening_port }}/tcp"
+      - "{{ qbt_listening_port }}:{{ qbt_listening_port }}/udp"
+      - "{{ qbt_internal_webui_port }}:{{ qbt_internal_webui_port }}/tcp"

@@ -1,0 +1,51 @@
+- name: allow lans has sources
+  ansible.posix.firewalld:
+    zone: home
+    permanent: yes
+    state: enabled
+    source: "{{ item }}"
+  loop: "{{ qbt_allowed_lan }}"
+  notify: reload firewalld
+
+- name: home firewall disable
+  ansible.posix.firewalld:
+    zone: home
+    state: disabled
+    permanent: yes
+    service: "{{ item }}"
+  loop:
+    - samba-client
+    - mdns
+    - dhcpv6-client
+  notify: reload firewalld
+
+- name: home firewall (samba, ssh, http)
+  ansible.posix.firewalld:
+    zone: home
+    state: enabled
+    permanent: yes
+    service: "{{ item }}"
+  loop:
+    - samba
+    - ssh
+    - http
+  notify: reload firewalld
+
+- name: allow public from everywhere
+  ansible.posix.firewalld:
+    zone: public
+    source: "0.0.0.0/0"
+    state: enabled
+    permanent: yes
+  notify: reload firewalld
+
+- name: public firewall (torrent)
+  ansible.posix.firewalld:
+    zone: public
+    state: enabled
+    permanent: yes
+    port: "{{ item }}"
+  loop:
+    - "{{ qbt_listening_port }}/tcp"
+    - "{{ qbt_listening_port }}/udp"
+  notify: reload firewalld
