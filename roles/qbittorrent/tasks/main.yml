@@ -13,6 +13,10 @@
     state: started
     restart_policy: always
     recreate: yes
+    generate_systemd:
+      restart_policy: "always"
+      wants: "network-online.target"
+      after: "network-online.target"
     env:
       PUID: "{{ qbt_user }}"
       PGID: "{{ qbt_group }}"
