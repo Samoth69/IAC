@@ -5,9 +5,23 @@
   package:
     name:
       - htop
+      - bmon
       - curl
       - nano
+      - git
     state: latest
+
+- name: copy custom template for zsh
+  become: yes
+  become_user: '{{ user.username }}'
+  copy:
+    src: templates/headline.zsh-theme
+    dest: '~{{ user.username }}/.oh-my-zsh/custom/themes/headline.zsh-theme'
+  with_items: '{{ users }}'
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: '{{ user.username }}'
 
 # copié collé de https://github.com/gantsign/ansible-role-oh-my-zsh/blob/master/tasks/install.yml#L52
 # permet de ré-écrire le template de oh my zsh pour être 100% raccord avec ce que je veux

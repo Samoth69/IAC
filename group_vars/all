@@ -2,13 +2,16 @@
 # OH MY ZSH
 #-----------------------
 
-oh_my_zsh_theme: agnoster
+oh_my_zsh_theme: headline
 
 # Default plugins
 oh_my_zsh_plugins:
   - git
   - docker
+  - docker-compose
   - terraform
+  - ansible
+  - kubectl
 
 # Whether to install by default for all specified users.
 # May be overridden by `oh_my_zsh: install:` under each user.
