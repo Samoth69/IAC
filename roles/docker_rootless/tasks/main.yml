@@ -3,12 +3,10 @@
     name: dnf-plugins-core
     state: latest
 
+# c'est un peu sale comme méthode, mais il y a ~10 repo à mettre en place avec leurs clés gpg
 - name: adding docker repo
-  yum_repository:
-    name: docker
-    description: docker repo
-    baseurl: https://download.docker.com/linux/fedora/docker-ce.repo
-    gpgcheck: no
+  command: sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+  become: true
 
 - name: install docker-ce
   package:
@@ -17,7 +15,6 @@
       - docker-ce-cli
       - containerd.io
       - docker-compose-plugin
-      - uidmap
       - fuse-overlayfs
       - iptables
       - docker-ce-rootless-extras
@@ -30,9 +27,10 @@
     name: docker
 
 - name: create user {{ docker_user }}
-  name: "{{ docker_user }}"
-  state: present
-  password_lock: true
+  user:
+    name: "{{ docker_user }}"
+    state: present
+    password_lock: true
 
 - name: start docker with {{ docker_user }}
   become: true
