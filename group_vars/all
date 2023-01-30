@@ -67,3 +67,9 @@ qbt_user: 1000
 qbt_group: 1000
 qbt_tz: Europe/Paris
 qbt_internal_webui_port: 3000
+
+#-----------------------
+# docker-rootless
+#-----------------------
+
+docker_user: "docker_user"
