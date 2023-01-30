@@ -1,0 +1,5 @@
+- name: Install docker rootless
+  become: yes
+  hosts: docker-rootless
+  roles:
+    - docker_rootless

@@ -1,0 +1,44 @@
+- name: install dnf-plugins-core
+  package:
+    name: dnf-plugins-core
+    state: latest
+
+- name: adding docker repo
+  yum_repository:
+    name: docker
+    description: docker repo
+    baseurl: https://download.docker.com/linux/fedora/docker-ce.repo
+    gpgcheck: no
+
+- name: install docker-ce
+  package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+      - uidmap
+      - fuse-overlayfs
+      - iptables
+      - docker-ce-rootless-extras
+    state: latest
+
+- name: disable system (root) docker
+  systemd:
+    state: stopped
+    enabled: no
+    name: docker
+
+- name: create user {{ docker_user }}
+  name: "{{ docker_user }}"
+  state: present
+  password_lock: true
+
+- name: start docker with {{ docker_user }}
+  become: true
+  become_user: "{{ docker_user }}"
+  systemd:
+    state: started
+    enabled: yes
+    scope: user
+    name: docker
