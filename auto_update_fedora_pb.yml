@@ -1,7 +1,7 @@
 ---
 
 - name: install auto update FEDORA
-  hosts: auto_update_fedora
+  hosts: fedora
   become: yes
   roles:
     - auto_update_fedora

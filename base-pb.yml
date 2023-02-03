@@ -2,7 +2,7 @@
 
 - name: Config de base sur les machines linux
   become: yes
-  hosts: base
+  hosts: all!proxmox
   roles:
     - gantsign.oh-my-zsh
     - base

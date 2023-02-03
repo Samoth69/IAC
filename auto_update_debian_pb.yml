@@ -1,6 +1,6 @@
 ---
 
 - name: install auto update DEBIAN/UBUNTU
-  hosts: auto_update_debian
+  hosts: debian
   roles:
     - auto_update_debian

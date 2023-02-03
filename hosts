@@ -1,27 +1,53 @@
-[base]
-localhost   ansible_connection=local
-192.168.0.2
-192.168.0.18
-192.168.0.24
-192.168.2.10
-vps.samoth.eu
+all:
+  children:
+    # distros
+    fedora:
+      hosts:
+        192.168.0.18:
+        192.168.0.24:
+        192.168.2.10:
+    ubuntu:
+      hosts:
+        192.168.0.2:
+      children:
+        offite:
+    debian:
+      children:
+        proxmox:
+    
+    # alias
+    proxmox:
+      hosts:
+        192.168.0.5:
+          ansible_ssh_user: root
+        192.168.0.22:
+          ansible_ssh_user: root
 
-[seafile_server]
-vps.samoth.eu
+    torrent:
+      hosts:
+        192.168.2.10:
 
-[auto_update_fedora]
-192.168.0.24
-192.168.2.10
+    offsite1:
+      hosts:
+        vps.samoth.eu:
 
-[qbittorrent]
-192.168.2.10
+    docker:
+      hosts:
+        192.168.0.2:
+        192.168.0.18:
+        # 192.168.2.10:
+        vps.samoth.eu:
+        
+    
+    # apps
+    seafile_server:
+      children:
+        offsite1:
 
-[watchtower]
-192.168.0.2
-192.168.0.18
-192.168.2.10
-vps.samoth.eu
-
-[nut]
-192.168.0.5    ansible_ssh_user=root
-192.168.0.22    ansible_ssh_user=root
+    qbittorrent:
+      children:
+        torrent:
+        
+    watchtower:
+      children:
+        docker:

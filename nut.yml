@@ -2,6 +2,6 @@
 
 - name: install nut
   become: yes 
-  hosts: nut
+  hosts: proxmox
   roles:
     - nut
