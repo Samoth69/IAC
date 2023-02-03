@@ -1,0 +1,5 @@
+- name: "docker: watchtower"
+  hosts: watchtower
+  become: yes
+  roles:
+    - watchtower
