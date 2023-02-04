@@ -24,19 +24,64 @@
   systemd:
     state: stopped
     enabled: no
-    name: docker
+    name: "{{item}}"
+  with_items:
+    - docker.service
+    - docker.socket
 
-- name: create user {{ docker_user }}
-  user:
-    name: "{{ docker_user }}"
+- name: create docker group
+  group:
+    name: docker
     state: present
+
+- name: adding {{ user_to_add_to_docker_grp }} to docker group
+  user:
+    name: "{{ user_to_add_to_docker_grp }}"
+    groups: docker
+    append: yes
+
+- name: create docker user
+  user:
+    name: "docker"
+    state: present
+    group: docker
     password_lock: true
 
-- name: start docker with {{ docker_user }}
+# ces deux taches sont copiés d'ici: https://github.com/konstruktoid/ansible-role-docker-rootless/blob/main/tasks/manage_user.yml#L22
+- name: Ensure docker user is lingering
+  ansible.builtin.stat:
+    path: "/var/lib/systemd/linger/docker"
+  register: docker_user_lingering
+
+- name: Enable lingering for the Docker user
   become: true
-  become_user: "{{ docker_user }}"
+  ansible.builtin.command: "loginctl enable-linger docker"
+  when: not docker_user_lingering.stat.exists
+
+- name: load ip_tables
+  modprobe:
+    name: ip_tables
+    state: present
+  when: not docker_user_lingering.stat.exists
+
+- name: exécution de dockerd-rootless-setuptool.sh
+  become_user: "docker"
+  command: "dockerd-rootless-setuptool.sh install"
+  when: not docker_user_lingering.stat.exists
+
+- name: récupération des infos de l'user docker
+  getent:
+    database: passwd
+    key: docker
+
+- name: start docker with user docker
+  become_user: "docker"
   systemd:
     state: started
     enabled: yes
     scope: user
     name: docker
+    daemon_reload: yes
+  environment:
+    # récupère l'uid de l'user docker
+    XDG_RUNTIME_DIR: "/run/user/{{ ansible_facts.getent_passwd.docker[1] }}"

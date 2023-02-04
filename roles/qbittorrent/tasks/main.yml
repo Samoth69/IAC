@@ -1,28 +1,16 @@
 - import_tasks: firewall.yml
 
-- name: pulling containers images
-  containers.podman.podman_image:
-    name: "{{ item }}"
-  loop:
-    - docker.io/linuxserver/qbittorrent
-
 - name: setup qbittorrent container
-  containers.podman.podman_container:
+  docker_container:
     name: "{{ qbt_container_name }}"
     image: linuxserver/qbittorrent
     state: started
-    restart_policy: always
-    recreate: yes
-    generate_systemd:
-      restart_policy: "always"
-      wants: "network-online.target"
-      after: "network-online.target"
+    restart_policy: unless-stopped
     env:
-      PUID: "{{ qbt_user }}"
-      PGID: "{{ qbt_group }}"
+      PUID: "{{ qbt_user | string }}"
+      PGID: "{{ qbt_group | string }}"
       TZ: "{{ qbt_tz }}"
-      WEBUI_PORT: "{{ qbt_internal_webui_port }}"
-    expose: "{{ qbt_internal_webui_port }}"
+      WEBUI_PORT: "{{ qbt_internal_webui_port | string }}"
     volumes:
       - "{{ qbt_config_path }}:/config"
       - "{{ qbt_torrent_path }}:/downloads"
