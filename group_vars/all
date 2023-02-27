@@ -61,6 +61,7 @@ qbt_allowed_lan:
 qbt_config_path: /home/thomas/podman/qbt_config
 qbt_container_name: qbt
 qbt_torrent_path: /media/p2p/downloaded
+qbt_torrent_path_2: /media/tank/downloaded
 # P2P listening port
 qbt_listening_port: 56000
 qbt_user: 1000
