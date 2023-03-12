@@ -13,5 +13,5 @@
       "0 0 4 * * *",
       "--rolling-restart",
       "--stop-timeout",
-      "2m"
+      "20m"
     ]
