@@ -62,3 +62,8 @@
       - cockpit-system
       - cockpit-ws
     state: absent
+
+- name: défini le hostname de la machines
+  hostname:
+    name: "{{ hostname }}"
+  when: hostname is defined
