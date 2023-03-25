@@ -15,7 +15,7 @@
         "--rolling-restart",
         "--stop-timeout",
         "20m",
-        "--notification-url",
-        "{{ url_discord }}",
+        # "--notification-url",
+        # "{{ url_discord }}",
       ]
   when: url_discord is defined
