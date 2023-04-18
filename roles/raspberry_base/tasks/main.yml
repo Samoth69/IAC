@@ -16,6 +16,14 @@
     dest: "/etc/modprobe.d/raspi-blacklist.conf"
   notify: restart device
 
+- name: enable cgroups in cmdline
+  lineinfile:
+    path: "/boot/cmdline.txt"
+    regexp: "^"
+    line: cgroup_enable=memory cgroup_memory=1
+    state: present
+  notify: restart device
+
 - name: Flush handlers (reboot device if needed)
   meta: flush_handlers
 
