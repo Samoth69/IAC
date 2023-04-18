@@ -15,6 +15,7 @@
       - "{{ qbt_config_path }}:/config"
       - "{{ qbt_torrent_path }}:/downloads/ssd"
       - "{{ qbt_torrent_path_2 }}:/downloads/tank"
+      - "{{ qbt_torrent_path_3 }}:/downloads/tank2"
     ports:
       - "{{ qbt_listening_port }}:{{ qbt_listening_port }}/tcp"
       - "{{ qbt_listening_port }}:{{ qbt_listening_port }}/udp"

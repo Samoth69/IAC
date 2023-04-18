@@ -15,6 +15,9 @@ all:
     debian:
       children:
         proxmox:
+    raspbian:
+      hosts:
+        192.168.0.17
     
     # alias
     proxmox:

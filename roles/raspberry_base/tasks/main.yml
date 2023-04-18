@@ -1,0 +1,49 @@
+- name: apply config.txt
+  copy:
+    src: "boot.txt"
+    dest: "/boot/config.txt"
+  notify: restart device
+
+- name: make sudo require password
+  template:
+    src: "010_pi-nopasswd.j2"
+    dest: "/etc/sudoers.d/010_pi-nopasswd"
+  notify: restart device
+
+- name: module blacklist
+  copy:
+    src: "raspi-blacklist.conf"
+    dest: "/etc/modprobe.d/raspi-blacklist.conf"
+  notify: restart device
+
+- name: Flush handlers (reboot device if needed)
+  meta: flush_handlers
+
+- name: remove audio, wifi and bt crap
+  apt:
+    name:
+      - pulseaudio
+      - wpasupplicant
+      - bluez
+    state: absent
+
+- name: apt update, upgrade & autoremove
+  apt:
+    update_cache: true
+    upgrade: yes
+    autoremove: true
+
+- name: install snap
+  apt:
+    name:
+      - snapd
+      - htop
+      - bmon
+      - git
+    state: latest
+
+- name: install k8s
+  community.general.snap:
+    name: microk8s
+    classic: true
+    
