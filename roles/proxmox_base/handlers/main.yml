@@ -1,0 +1,6 @@
+- name: Reload systemd and enable powertop
+  systemd:
+    name: powertop
+    state: started
+    enabled: true
+    daemon_reload: true

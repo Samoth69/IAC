@@ -1,0 +1,15 @@
+# PROXMOX config
+
+# -------------------------------------
+# vzdump (module de sauvegarde des VMs)
+# -------------------------------------
+
+# limite de bande passante pour les sauvegardes
+# ko/s
+bwlimit: 30000
+
+# nombre max de worker
+max_workers: 2
+
+# priorité (8 pour idle)
+ionice: 8

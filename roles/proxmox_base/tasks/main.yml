@@ -1,0 +1,30 @@
+- name: install usefull tools
+  package:
+    name:
+      - htop
+      - powertop
+    state: latest
+
+- name: set vzdump config
+  template:
+    src: templates/vzdump.conf.j2
+    dest: /etc/vzdump.conf
+
+- name: activation turbo boost mini PC
+  when: ansible_facts['form_factor'] == 'Mini PC'
+  become: yes
+  become_user: root
+  block:
+    - name: Mini PC only - Enabling turbo (/sys/devices/system/cpu/cpufreq/boost)
+      ignore_errors: true
+      command: sh -c "echo '1' > /sys/devices/system/cpu/cpufreq/boost"
+
+- name: Copy powertop service file
+  copy:
+    src: templates/powertop.service
+    dest: /etc/systemd/system/powertop.service
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx
+  notify: Reload systemd and enable powertop
+  
