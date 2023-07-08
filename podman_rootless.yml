@@ -1,0 +1,6 @@
+- name: install podman in rootless mode (with selinux)
+  hosts: rocky
+  become: yes
+  roles:
+    - podman_rootless
+  

@@ -1,0 +1,13 @@
+module mymodule 1.0;
+
+require {
+    type unconfined_t;
+    type user_t;
+    class dir relabelto;
+    class dir setattr;
+}
+
+# autorise ansible à changer les roles du
+# dossier /appli
+allow unconfined_t user_t:dir relabelto;
+allow unconfined_t user_t:dir setattr;
