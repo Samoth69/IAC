@@ -1,5 +1,11 @@
----
-
+- name: add epel-release if rocky linux
+  become: yes
+  package:
+    name:
+      - epel-release
+    state: latest
+  when: ansible_distribution == 'Rocky'
+  
 - name: check if usefull tools are installed
   become: yes
   package:
