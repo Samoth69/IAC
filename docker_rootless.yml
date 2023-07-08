@@ -1,5 +1,0 @@
-- name: Install docker rootless
-  become: yes
-  hosts: fedora:ubuntu
-  roles:
-    - docker_rootless
