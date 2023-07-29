@@ -5,6 +5,7 @@
       - slirp4netns
       - buildah
       - podman
+      - checkpolicy
     state: latest
 
 - name: copy podman config rootless

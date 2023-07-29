@@ -8,4 +8,5 @@ ansible-galaxy install linux-system-roles.kernel_settings
 ansible-galaxy collection install community.docker
 ansible-galaxy collection install ansible.posix
 ansible-galaxy collection install containers.podman
+ansible-galaxy collection install devsec.hardening
 ```
