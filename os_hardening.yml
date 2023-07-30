@@ -1,23 +1,34 @@
-- name: os_hardening prérequis
+- name: os_hardening prérequis (dnf-automatic)
   become: yes
-  hosts: fedora
+  hosts: rocky
   tasks:
   - package:
       name:
         - libselinux-python3
+        - dnf-automatic
       state: latest
+  - systemd:
+      state: started
+      enabled: true
+      name: dnf-automatic.timer
 
-- name: os_hardening
+- name: base_install
   become: yes
-  hosts: fedora
-  collections:
-    - devsec.hardening
+  hosts: rocky
   roles:
-    - devsec.hardening.os_hardening
-  vars:
-    - os_auth_pw_max_age: 99999
-    - os_auth_pw_min_age: 0
-    - os_auth_pam_passwdqc_enable: false
-    - os_security_kernel_enable_module_loading: false
-    - os_security_auto_logout: 3600 # 1 heure
-    
+    - gantsign.oh-my-zsh
+    - base
+
+# - name: os_hardening
+#   become: yes
+#   hosts: rocky
+#   collections:
+#     - devsec.hardening
+#   roles:
+#     - devsec.hardening.os_hardening
+#   vars:
+#     - os_auth_pw_max_age: 99999
+#     - os_auth_pw_min_age: 0
+#     - os_auth_pam_passwdqc_enable: false
+#     - os_security_kernel_enable_module_loading: false
+#     - os_security_auto_logout: 3600 # 1 heure

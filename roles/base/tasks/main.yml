@@ -69,6 +69,14 @@
       - cockpit-ws
     state: absent
 
+- name: Enlever cockpit du parefeu
+  firewalld:
+    service: cockpit
+    permanent: true
+    immediate: true
+    state: disabled
+  ignore_errors: true # cette étape peut planter si firewalld n'est pas présent sur la machine
+
 - name: défini le hostname de la machines
   hostname:
     name: "{{ hostname }}"
