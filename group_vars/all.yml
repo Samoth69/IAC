@@ -71,13 +71,6 @@ qbt_tz: Europe/Paris
 qbt_internal_webui_port: 3000
 
 #-----------------------
-# docker-rootless
-#-----------------------
-
-# utilisateur à ajouter au groupe docker, pour pouvoir interagir avec le socket
-user_to_add_to_docker_grp: "thomas"
-
-#-----------------------
 # watchtower
 #-----------------------
 url_discord: discord://IRQB85dsDhG5UBHNmEUQixxeK_gkPrT37vBzZUccw1lbaZFc1akNh-ldeGkBqSyR5XSF@1080877790498406570

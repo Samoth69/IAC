@@ -1,5 +1,5 @@
 - name: install podman in rootless mode (with selinux)
-  hosts: fedora
+  hosts: podman
   become: yes
   roles:
     - podman_rootless

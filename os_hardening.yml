@@ -1,6 +1,6 @@
 - name: os_hardening prérequis (dnf-automatic)
   become: yes
-  hosts: rocky
+  hosts: fedora
   tasks:
   - package:
       name:
@@ -14,14 +14,14 @@
 
 - name: base_install
   become: yes
-  hosts: rocky
+  hosts: fedora
   roles:
     - gantsign.oh-my-zsh
     - base
 
 - name: os_hardening
   become: yes
-  hosts: rocky
+  hosts: fedora
   collections:
     - devsec.hardening
   roles:
