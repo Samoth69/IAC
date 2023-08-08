@@ -27,8 +27,8 @@
   roles:
     - devsec.hardening.os_hardening
   vars:
-    - os_auth_pw_max_age: 99999
-    - os_auth_pw_min_age: 0
-    - os_auth_pam_passwdqc_enable: false
-    - os_security_kernel_enable_module_loading: false
-    - os_security_auto_logout: 3600 # 1 heure
+    os_auth_pw_max_age: 99999
+    os_auth_pw_min_age: 0
+    os_auth_pam_passwdqc_enable: false
+    os_security_kernel_enable_module_loading: false
+    os_security_auto_logout: 3600 # 1 heure

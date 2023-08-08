@@ -78,5 +78,11 @@ url_discord: discord://IRQB85dsDhG5UBHNmEUQixxeK_gkPrT37vBzZUccw1lbaZFc1akNh-lde
 #-----------------------
 # raspberry_base
 #-----------------------
-
 rpi_base_username: thomas
+
+#-----------------------
+# pihole
+#-----------------------
+pihole_base_folder: /appli/pihole
+pihole_etc_pihole_folder: "{{pihole_base_folder}}/etc-pihole"
+pihole_etc_dnsmasq_folder: "{{pihole_base_folder}}/etc-dnsmasq.d"

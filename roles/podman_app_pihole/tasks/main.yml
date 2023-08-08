@@ -1,0 +1,74 @@
+- name: check if /appli exist
+  stat:
+    path: /appli
+  register: appli_exist
+
+- name: raise error is /appli doesn't exist
+  fail:
+    msg: le dossier /appli n'existe pas
+  when: not appli_exist.stat.exists
+
+- name: check if podboy_uid is defined
+  fail:
+    msg: podboy_uid variable isn't defined
+  when: podboy_uid is undefined
+
+- name: check if podboy_gid is defined
+  fail:
+    msg: podboy_gid variable isn't defined
+  when: podboy_gid is undefined
+
+- name: Pull pihole image
+  become: true
+  become_user: podboy
+  containers.podman.podman_image:
+    name: docker.io/pihole/pihole:latest
+
+## TODO ajouter la règle de unprivileged port sur sysctl.conf
+
+- name: disable and stop systemd-resolved
+  systemd:
+    name: systemd-resolved
+    state: stopped
+    enabled: false
+    masked: true
+  notify: restart NetworkManager
+
+- name: copy NetworkManager config
+  copy:
+    src: NetworkManager.conf
+    dest: /etc/NetworkManager/NetworkManager.conf
+  notify: restart NetworkManager
+
+- name: remove /etc/resolv.conf symlink
+  file:
+    path: /etc/resolv.conf
+    state: absent
+
+- name: create pihole directories if needed
+  file:
+    path: "{{item}}"
+    owner: podboy
+    group: podboy
+    mode: u=rwx,g=rx,o-rwx
+    state: directory
+  with_items:
+    - "{{pihole_etc_pihole_folder}}"
+    - "{{pihole_etc_dnsmasq_folder}}"
+
+- name: create pihole container
+  become: true
+  become_user: podboy
+  containers.podman.podman_container:
+    name: pihole
+    image: docker.io/pihole/pihole:latest
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+      - 80:80/tcp
+    env:
+      TZ: Europe/Paris
+    volumes:
+      - "{{pihole_etc_pihole_folder}}:/etc/pihole:Z"
+      - "{{pihole_etc_dnsmasq_folder}}:/etc/dnsmasq.d:Z"
+    restart_policy: always

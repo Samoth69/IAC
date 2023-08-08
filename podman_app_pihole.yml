@@ -1,0 +1,5 @@
+- name: pihole with podman
+  become: yes
+  hosts: podman
+  roles:
+    - podman_app_pihole

@@ -6,38 +6,8 @@
       - buildah
       - podman
       - checkpolicy
+      - setools-console
     state: latest
-
-- name: copy podman config rootless
-  copy: 
-    src: "{{item}}"
-    dest: "/etc/containers/{{item}}"
-  with_items:
-    - storage.conf
-    - containers.conf
-
-- name: copy selinux policy
-  copy:
-    src: "mymodule.te"
-    dest: "~/mymodule.te"
-
-- name: compile selinux policy 1/2
-  command: checkmodule -M -m -o ~/mymodule.mod ~/mymodule.te
-  
-- name: compile selinux policy 2/2
-  command: semodule_package -o ~/mymodule.pp -m ~/mymodule.mod
-
-- name: install selinux policy
-  command: semodule -i ~/mymodule.pp
-
-- name: clean policy files
-  file:
-    path: "{{item}}"
-    state: absent
-  with_items:
-    - mymodule.te
-    - mymodule.mod
-    - mymodule.pp
 
 - name: create user podboy
   user:
@@ -54,6 +24,3 @@
     group: podboy
     mode: 'u=rwx,g=rx,o=rx'
     state: directory
-    seuser: user_u
-    serole: user_r
-    setype: user_t
