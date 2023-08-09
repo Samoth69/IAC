@@ -9,11 +9,19 @@
       - setools-console
     state: latest
 
+- name: copy config files
+  copy:
+    src: "{{item}}"
+    dest: "/etc/containers/{{item}}"
+  with_items:
+    - containers.conf
+    - storage.conf
+
 - name: create user podboy
   user:
     name: podboy
     expires: -1
-    seuser: user_u
+    # seuser: user_u
     password_lock: yes
     password: "!"
 
