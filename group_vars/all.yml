@@ -86,3 +86,7 @@ rpi_base_username: thomas
 pihole_base_folder: /appli/pihole
 pihole_etc_pihole_folder: "{{pihole_base_folder}}/etc-pihole"
 pihole_etc_dnsmasq_folder: "{{pihole_base_folder}}/etc-dnsmasq.d"
+# port locaux utilisé entre le container et le firewall de la machine
+# par ce que un utilisateur non privilégié ne peut pas écouter sur les ports < 1024
+os_dns_port: 1153
+os_http_port: 1180

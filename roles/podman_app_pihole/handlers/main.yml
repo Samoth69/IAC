@@ -2,3 +2,8 @@
   systemd:
     name: NetworkManager
     state: restarted
+
+- name: reload firewalld
+  systemd:
+    name: firewalld
+    state: reloaded

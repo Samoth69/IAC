@@ -18,12 +18,12 @@
     msg: podboy_gid variable isn't defined
   when: podboy_gid is undefined
 
-- name: disable and stop systemd-resolved
+- name: enable systemd-resolved
   systemd:
     name: systemd-resolved
-    state: stopped
+    state: started
     enabled: false
-    masked: true
+    masked: false
     daemon_reload: true
 
 - name: create resolved.conf.d folder
@@ -51,14 +51,6 @@
   with_items:
     - "virt_sandbox_use_netlink"
 
-- name: ajout règle sysctl
-  sysctl:
-    name: net.ipv4.ip_unprivileged_port_start
-    value: "0"
-    sysctl_set: true
-    state: present
-    reload: true
-
 - name: copy NetworkManager config
   copy:
     src: NetworkManager.conf
@@ -70,16 +62,71 @@
     path: /etc/resolv.conf
     state: absent
 
-- name: create pihole directories if needed
+- name: check if pihole folders exist
+  stat:
+    path: "{{pihole_base_folder}}"
+  register: pihole_folder
+
+- name: create pihole directory
   file:
-    path: "{{item}}"
+    path: "{{pihole_base_folder}}"
     owner: podboy
     group: podboy
-    mode: u=rwx,g=rx,o-rwx
+    mode: "u=rwx,g=rx"
+    state: directory
+  when: not pihole_folder.stat.exists
+
+- name: create pihole sub directories if needed
+  file:
+    path: "{{item.file}}"
+    owner: podboy
+    group: podboy
+    mode: "{{item.perm}}"
     state: directory
   with_items:
-    - "{{pihole_etc_pihole_folder}}"
-    - "{{pihole_etc_dnsmasq_folder}}"
+    # les perm du dossier pihole sont large car elles seront réécrites par l'appli au démarrage
+    - { file: "{{pihole_etc_pihole_folder}}", perm: "u=rwx,g=rx,o-rwx" }
+    - { file: "{{pihole_etc_dnsmasq_folder}}", perm: "u=rwx,g=rwx,o=rwx" }
+  when: not pihole_folder.stat.exists
+
+- name: add firewall service rules
+  firewalld:
+    service: "{{item}}"
+    permanent: true
+    state: enabled
+  with_items:
+    - dns
+    - http
+  notify: reload firewalld
+
+- name: add firewall forward rules
+  firewalld:
+    permanent: true
+    state: enabled
+    port_forward:
+      - port: "{{item.port}}"
+        proto: "{{item.proto}}"
+        toport: "{{item.toport}}"
+  with_items:
+    - { port: 53, proto: udp, toport: "{{os_dns_port}}" }
+    - { port: 53, proto: tcp, toport: "{{os_dns_port}}" }
+    - { port: 80, proto: tcp, toport: "{{os_http_port}}" }
+  notify: reload firewalld
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: pull pihole image
+  containers.podman.podman_image:
+    name: docker.io/pihole/pihole:latest
+
+- name: disable and stop systemd-resolved
+  systemd:
+    name: systemd-resolved
+    state: stopped
+    enabled: false
+    masked: true
+    daemon_reload: true
 
 - name: create pihole container
   become: true
@@ -88,13 +135,13 @@
     name: pihole
     image: docker.io/pihole/pihole:latest
     ports:
-      - 53:53/tcp
-      - 53:53/udp
-      - 80:80/tcp
+      - "{{os_dns_port}}:53/tcp"
+      - "{{os_dns_port}}:53/udp"
+      - "{{os_http_port}}:80/tcp"
     env:
       TZ: Europe/Paris
-      # PIHOLE_UID: "{{podboy_uid}}"
-      # PIHOLE_GID: "{{podboy_gid}}"
+      # pour une raison obscure, l'interface des containers podman s'appelle tap0 et non eth0
+      INTERFACE: tap0
     volumes:
       - "{{pihole_etc_pihole_folder}}:/etc/pihole:Z"
       - "{{pihole_etc_dnsmasq_folder}}:/etc/dnsmasq.d:Z"
@@ -102,3 +149,4 @@
     cap_add:
       - CAP_CHOWN
       - CAP_NET_BIND_SERVICE
+    network: slirp4netns:port_handler=slirp4netns
