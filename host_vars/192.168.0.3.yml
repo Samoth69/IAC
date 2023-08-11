@@ -1,3 +1,2 @@
 hostname: "PiHoleBeta"
-podboy_uid: 1001
-podboy_gid: 1001
+podman_storage_driver: "btrfs"

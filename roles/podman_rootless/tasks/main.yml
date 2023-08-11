@@ -10,8 +10,8 @@
     state: latest
 
 - name: copy config files
-  copy:
-    src: "{{item}}"
+  template:
+    src: "{{item}}.j2"
     dest: "/etc/containers/{{item}}"
   with_items:
     - containers.conf
@@ -32,3 +32,6 @@
     group: podboy
     mode: 'u=rwx,g=rx,o=rx'
     state: directory
+
+- name: Enable linger for podboy user
+  command: "loginctl enable-linger podboy"

@@ -8,15 +8,13 @@
     msg: le dossier /appli n'existe pas
   when: not appli_exist.stat.exists
 
-- name: check if podboy_uid is defined
-  fail:
-    msg: podboy_uid variable isn't defined
-  when: podboy_uid is undefined
+- name: register podboy uid
+  command: id -u podboy
+  register: podboy_uid
 
-- name: check if podboy_gid is defined
-  fail:
-    msg: podboy_gid variable isn't defined
-  when: podboy_gid is undefined
+- name: register podboy gid
+  command: id -g podboy
+  register: podboy_gid
 
 - name: enable systemd-resolved
   systemd:
@@ -55,7 +53,6 @@
   copy:
     src: NetworkManager.conf
     dest: /etc/NetworkManager/NetworkManager.conf
-  notify: restart NetworkManager
 
 - name: remove /etc/resolv.conf symlink
   file:
@@ -89,8 +86,25 @@
     - { file: "{{pihole_etc_dnsmasq_folder}}", perm: "u=rwx,g=rwx,o=rwx" }
   when: not pihole_folder.stat.exists
 
-- name: add firewall service rules
+- name: copy dnscrypt config
+  copy:
+    src: "dnscrypt-proxy.toml"
+    dest: "{{pihole_dnscrypt_conf_file}}"
+    owner: podboy
+    group: podboy
+    mode: 'u=rw,g=r,o=r'
+
+- name: create local systemd directory
+  file:
+    path: "{{pihole_services_path}}"
+    owner: podboy
+    group: podboy
+    mode: "u=rwx"
+    state: directory
+
+- name: add firewall service rules for lan
   firewalld:
+    zone: public
     service: "{{item}}"
     permanent: true
     state: enabled
@@ -99,8 +113,9 @@
     - http
   notify: reload firewalld
 
-- name: add firewall forward rules
+- name: add firewall forward rules for lan
   firewalld:
+    zone: public
     permanent: true
     state: enabled
     port_forward:
@@ -113,12 +128,53 @@
     - { port: 80, proto: tcp, toport: "{{os_http_port}}" }
   notify: reload firewalld
 
+- name: add lo interface to firewall trusted zone
+  firewalld:
+    zone: trusted
+    interface: lo
+    state: enabled
+    permanent: true
+  notify: reload firewalld
+
+- name: add firewall service rules for lo
+  firewalld:
+    zone: trusted
+    service: "{{item}}"
+    permanent: true
+    state: enabled
+  with_items:
+    - dns
+  notify:
+    - reload firewalld
+    - restart NetworkManager
+
+- name: add firewall forward rules for lo
+  firewalld:
+    zone: trusted
+    permanent: true
+    state: enabled
+    port_forward:
+      - port: "{{item.port}}"
+        proto: "{{item.proto}}"
+        toport: "{{item.toport}}"
+  with_items:
+    - { port: 53, proto: udp, toport: "{{os_dns_port}}" }
+    - { port: 53, proto: tcp, toport: "{{os_dns_port}}" }
+  notify:
+    - reload firewalld
+    - restart NetworkManager
+
 - name: flush handlers
   meta: flush_handlers
 
 - name: pull pihole image
+  become: true
+  become_user: podboy
   containers.podman.podman_image:
-    name: docker.io/pihole/pihole:latest
+    name: "{{item}}"
+  with_items:
+    - "{{pihole_pihole_image}}"
+    - "{{pihole_dnscrypt_image}}"
 
 - name: disable and stop systemd-resolved
   systemd:
@@ -128,25 +184,87 @@
     masked: true
     daemon_reload: true
 
-- name: create pihole container
+- name: create pod
   become: true
   become_user: podboy
-  containers.podman.podman_container:
-    name: pihole
-    image: docker.io/pihole/pihole:latest
+  containers.podman.podman_pod:
+    name: "{{pihole_pod_name}}"
+    state: created
+    network: slirp4netns:port_handler=slirp4netns
     ports:
       - "{{os_dns_port}}:53/tcp"
       - "{{os_dns_port}}:53/udp"
       - "{{os_http_port}}:80/tcp"
+    generate_systemd:
+      after: network-online.target
+      wants: network-online.target
+      new: true
+      restart_policy: "{{pihole_services_restart_policy}}"
+      path: "{{pihole_services_path}}"
+
+- name: create dnscrypt container
+  become: true
+  become_user: podboy
+  containers.podman.podman_container:
+    name: "{{pihole_dnscrypt_name}}"
+    image: "{{pihole_dnscrypt_image}}"
+    pod: "{{pihole_pod_name}}"
+    # restart_policy: always
+    volumes:
+      - "{{pihole_dnscrypt_conf_file}}:/etc/dnscrypt-proxy/dnscrypt-proxy.toml:ro,Z"
+    generate_systemd:
+      after: "{{pihole_services_pod_name}}"
+      requires: "{{pihole_services_pod_name}}"
+      new: true
+      restart_policy: "{{pihole_services_restart_policy}}"
+      path: "{{pihole_services_path}}"
+    state: started
+
+- name: create pihole container
+  become: true
+  become_user: podboy
+  containers.podman.podman_container:
+    name: "{{pihole_pihole_name}}"
+    image: "{{pihole_pihole_image}}"
+    pod: "{{pihole_pod_name}}"
     env:
       TZ: Europe/Paris
-      # pour une raison obscure, l'interface des containers podman s'appelle tap0 et non eth0
+      # slirp4netns utilise la carte réseau tap0 pour la communication container/hôte
       INTERFACE: tap0
     volumes:
       - "{{pihole_etc_pihole_folder}}:/etc/pihole:Z"
       - "{{pihole_etc_dnsmasq_folder}}:/etc/dnsmasq.d:Z"
-    restart_policy: always
+    # restart_policy: always
     cap_add:
       - CAP_CHOWN
       - CAP_NET_BIND_SERVICE
-    network: slirp4netns:port_handler=slirp4netns
+    generate_systemd:
+      after: "{{pihole_services_pod_name}}"
+      requires: "{{pihole_services_pod_name}}"
+      new: true
+      restart_policy: "{{pihole_services_restart_policy}}"
+      path: "{{pihole_services_path}}"
+    state: started
+
+# semble nécessaire pour que le dns fonctionne correctement sur la machine
+- name: restart NetworkManager
+  systemd:
+    name: NetworkManager
+    state: restarted
+
+- name: reload user systemd
+  become: true
+  become_user: podboy
+  systemd:
+    daemon_reload: true
+    scope: "user"
+    name: "{{item}}"
+    state: started
+    enabled: true
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{podboy_uid.stdout}}"
+    DBUS_SESSION_BUS_ADDRESS: "/run/user/{{podboy_uid.stdout}}/bus"
+  with_items:
+    - "pod-{{pihole_pod_name}}"
+    - "container-{{pihole_pihole_name}}"
+    - "container-{{pihole_dnscrypt_name}}"
