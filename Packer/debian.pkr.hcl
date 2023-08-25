@@ -7,18 +7,27 @@ packer {
   }
 }
 
-variable "password" {
-  type      = string
-  sensitive = true
-}
-
-variable "username" {
+variable "proxmox_username" {
   type = string
 }
 
-variable "ssh_hashed_password" {
+variable "proxmox_password" {
   type      = string
   sensitive = true
+}
+
+variable "proxmox_node_url" {
+  type    = string
+  default = "https://192.168.0.5:8006/api2/json"
+}
+
+variable "proxmox_node_name" {
+  type    = string
+  default = "akame"
+}
+
+variable "ssh_user" {
+  type = string
 }
 
 variable "ssh_password" {
@@ -26,21 +35,47 @@ variable "ssh_password" {
   sensitive = true
 }
 
-variable "ssh_user" {
-  type = string
-}
-
-variable "node_name" {
-  type    = string
-  default = "akame"
-}
-
-variable "node_url" {
-  type    = string
-  default = "https://192.168.0.5:8006/api2/json"
+variable "ssh_hashed_password" {
+  type      = string
+  sensitive = true
 }
 
 source "proxmox-iso" "debian-preseed" {
+  # Proxmox settings
+  http_interface           = "Ethernet 3"
+  node                     = "${var.proxmox_node_name}"
+  username                 = "${var.proxmox_username}"
+  token                    = "${var.proxmox_password}"
+  proxmox_url              = "${var.proxmox_node_url}"
+  template_name            = "debian-12"
+  template_description     = "generated on ${timestamp()}"
+  unmount_iso              = true
+  insecure_skip_tls_verify = true
+
+  # VM Hardware
+  cores           = 4
+  memory          = 4096
+  scsi_controller = "virtio-scsi-single"
+  qemu_agent      = true
+  bios            = "ovmf" # boot in UEFI
+  iso_file        = "local:iso/debian-12.1.0-amd64-netinst.iso"
+  disks {
+    disk_size    = "16G"
+    storage_pool = "local-lvm"
+    type         = "scsi"
+  }
+  efi_config {
+    efi_storage_pool  = "local-lvm"
+    efi_type          = "4m"
+    pre_enrolled_keys = false
+  }
+  network_adapters {
+    bridge = "vmbr1"
+    model  = "virtio"
+  }
+
+  # VM provisionning
+  boot_wait = "8s"
   boot_command = [
     "c<wait>",
     "linux /install.amd/vmlinuz ",
@@ -55,44 +90,16 @@ source "proxmox-iso" "debian-preseed" {
     "<wait>",
     "boot<enter>"
   ]
-  boot_wait = "8s"
-  disks {
-    disk_size    = "16G"
-    storage_pool = "local-lvm"
-    type         = "scsi"
-  }
-  efi_config {
-    efi_storage_pool  = "local-lvm"
-    efi_type          = "4m"
-    pre_enrolled_keys = false
-  }
-  insecure_skip_tls_verify = true
-  iso_file                 = "local:iso/debian-12.1.0-amd64-netinst.iso"
-  network_adapters {
-    bridge = "vmbr1"
-    model  = "virtio"
-  }
   http_content = {
     "/preseed.cfg" = templatefile("${path.root}/configs/preseed.cfg", {
       ssh_hashed_password = "${var.ssh_hashed_password}"
     })
   }
-  http_interface       = "Ethernet 3"
-  node                 = "${var.node_name}"
-  token                = "${var.password}"
-  proxmox_url          = "${var.node_url}"
-  ssh_password         = "${var.ssh_password}"
-  ssh_timeout          = "15m"
-  ssh_username         = "${var.ssh_user}"
-  template_description = "Debian 12, generated on ${timestamp()}"
-  template_name        = "debian-12"
-  unmount_iso          = true
-  username             = "${var.username}"
-  qemu_agent           = true
-  cores                = 4
-  memory               = 4096
-  scsi_controller      = "virtio-scsi-single"
-  bios                 = "ovmf" # boot in UEFI
+
+  # SSH config
+  ssh_password = "${var.ssh_password}"
+  ssh_timeout  = "15m"
+  ssh_username = "${var.ssh_user}"
 }
 
 build {
