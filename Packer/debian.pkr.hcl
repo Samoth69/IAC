@@ -106,7 +106,8 @@ build {
   sources = ["source.proxmox-iso.debian-preseed"]
 
   provisioner "shell" {
-    inline = ["echo I LOVE DUCKS"]
+    execute_command = "echo '${var.ssh_password}' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
+    script          = "init.sh"
   }
 }
 
