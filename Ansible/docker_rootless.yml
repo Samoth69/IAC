@@ -1,0 +1,5 @@
+- name: docker_rootless install
+  become: yes
+  hosts: debian
+  roles:
+    - docker_rootless

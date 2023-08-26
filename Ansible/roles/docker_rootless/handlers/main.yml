@@ -1,0 +1,5 @@
+- name: delete podboy ssh key
+  authorized_key:
+    user: podboy
+    state: absent
+    key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"

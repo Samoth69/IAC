@@ -1,5 +1,3 @@
----
-
 - name: Config de base sur les machines linux
   become: yes
   hosts: all:!proxmox

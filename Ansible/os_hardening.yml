@@ -1,27 +1,6 @@
-- name: os_hardening prérequis (dnf-automatic)
-  become: yes
-  hosts: fedora
-  tasks:
-  - package:
-      name:
-        - libselinux-python3
-        - dnf-automatic
-      state: latest
-  - systemd:
-      state: started
-      enabled: true
-      name: dnf-automatic.timer
-
-- name: base_install
-  become: yes
-  hosts: fedora
-  roles:
-    - gantsign.oh-my-zsh
-    - base
-
 - name: os_hardening
   become: yes
-  hosts: fedora
+  hosts: all:!proxmox
   collections:
     - devsec.hardening
   roles:

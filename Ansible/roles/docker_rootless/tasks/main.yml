@@ -1,0 +1,125 @@
+- name: create user podboy
+  user:
+    name: podboy
+    expires: -1
+    password_lock: yes
+    password: "!"
+    shell: /bin/bash
+
+- name: get podboy uid
+  getent:
+    database: passwd
+    key: podboy
+
+- name: copy bash_aliases
+  template:
+    src: bash_aliases.j2
+    dest: /home/podboy/.bash_aliases
+    owner: podboy
+    group: podboy
+    mode: u=rw,g=r,o=r
+
+- name: create appli folder
+  file:
+    path: /appli
+    owner: podboy
+    group: podboy
+    mode: 'u=rwx,g=rx,o=rx'
+    state: directory
+
+- name: install prerequisites
+  apt:
+    update_cache: true
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - acl
+      - systemd-container
+    state: latest
+
+- name: add docker apt key
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+    keyring: /etc/apt/keyrings/docker.gpg
+
+- name: update right on docker gpg key
+  file:
+    path: /etc/apt/keyrings/docker.gpg
+    mode: 'a+r'
+
+- name: copy repo list file
+  copy:
+    src: docker.list
+    dest: /etc/apt/sources.list.d/docker.list
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: install docker
+  apt:
+    update_cache: true
+    name:
+      - docker-ce 
+      - docker-ce-cli 
+      - docker-ce-rootless-extras
+      - containerd.io 
+      - docker-buildx-plugin 
+      - docker-compose-plugin
+    state: latest
+
+- name: stop docker daemon
+  systemd:
+    scope: system
+    name: "{{item}}"
+    state: stopped
+    masked: true
+    enabled: false
+  with_items:
+    - docker.service
+    - docker.socket
+
+- name: install rootless prerequisites
+  apt:
+    name:
+      - uidmap
+      - dbus-user-session
+      - fuse-overlayfs
+      - slirp4netns
+    state: latest
+
+- name: sysctl pour docker rootless
+  sysctl:
+    name: "{{item.name}}"
+    value: "{{item.value}}"
+    state: present
+  with_items:
+    - { name: "kernel.unprivileged_userns_clone", value: 1 }
+
+- name: enable linger
+  command:
+    cmd: loginctl enable-linger podboy
+
+- name: add ssh key for ansible
+  authorized_key:
+    user: podboy
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+  notify: delete podboy ssh key
+
+- name: podboy user specific
+  become: false
+  vars:
+    ansible_user: podboy
+  block:
+    - name: execute docker rootless setuptool
+      command:
+        cmd: dockerd-rootless-setuptool.sh install
+
+    - name: enable rootless dockerd
+      systemd:
+        scope: user
+        state: started
+        enabled: true
+        name: docker
