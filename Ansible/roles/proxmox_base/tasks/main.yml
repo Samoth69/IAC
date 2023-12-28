@@ -25,6 +25,6 @@
     dest: /etc/systemd/system/powertop.service
     owner: root
     group: root
-    mode: u=rwx,g=rx,o=rx
+    mode: u=rw,g=r,o=r
   notify: Reload systemd and enable powertop
   

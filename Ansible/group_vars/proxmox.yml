@@ -6,7 +6,7 @@
 
 # limite de bande passante pour les sauvegardes
 # ko/s
-bwlimit: 30000
+bwlimit: 0
 
 # nombre max de worker
 max_workers: 2
