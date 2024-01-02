@@ -107,3 +107,13 @@
       - CAP_NET_BIND_SERVICE
       - CAP_SYS_NICE
       - CAP_CHOWN
+
+# ##################### gravity sync #####################
+
+- name: Create gravitysync user
+  user:
+    name: gravitysync
+    expires: -1
+    password_lock: yes
+    password: "!"
+    shell: /bin/bash
