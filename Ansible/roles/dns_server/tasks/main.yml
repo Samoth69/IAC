@@ -1,3 +1,10 @@
+# ##################### Pre Deploy Checks #####################
+
+- name: check if env vars are defined
+  fail:
+    msg: INFRA_PIHOLE_PASSWORD isn't defined
+  when: "pihole_password is undefined"
+
 # ##################### Firewall #####################
 
 - name: install ufw
@@ -90,7 +97,7 @@
       REV_SERVER_DOMAIN: "lan"
       REV_SERVER_TARGET: "192.168.0.1"
       REV_SERVER_CIDR: "192.168.0.0/16"
-      WEBTHEME: "default-darker"
+      WEBTHEME: "default-dark"
       WEBPASSWORD: "{{pihole_password}}"
       DNSMASQ_LISTENING: "all"
     volumes:
