@@ -1,2 +1,1 @@
 hostname: "PiHoleBeta"
-podman_storage_driver: "btrfs"

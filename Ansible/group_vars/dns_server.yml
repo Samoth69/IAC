@@ -1,0 +1,8 @@
+docker_user: "podboy"
+config_folder: "/home/{{docker_user}}/docker"
+dnscrypt_folder: "{{config_folder}}/dnscrypt"
+dnscrypt_config: "{{dnscrypt_folder}}/dnscrypt-proxy.toml"
+pihole_folder: "{{config_folder}}/pihole"
+pihole_pihole_folder: "{{pihole_folder}}/pihole"
+pihole_dnsmasqd_folder: "{{pihole_folder}}/dnsmasq.d"
+pihole_password: "{{lookup('env', 'INFRA_PIHOLE_PASSWORD')}}"

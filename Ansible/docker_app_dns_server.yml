@@ -1,0 +1,5 @@
+- name: config dns server
+  become: yes
+  hosts: dns_server
+  roles:
+    - dns_server

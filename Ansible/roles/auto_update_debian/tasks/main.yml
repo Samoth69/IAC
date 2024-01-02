@@ -1,10 +1,9 @@
----
-
 - name: checking if unattended-upgrades is installed
   become: yes
   package:
     name:
       - unattended-upgrades
+      - apt-listchanges
     state: latest
 
 - name: copy unattended config

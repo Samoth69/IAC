@@ -1,0 +1,102 @@
+# ##################### Firewall #####################
+
+- name: install ufw
+  package:
+    name:
+      - ufw
+    state: present
+
+- name: config ufw - logging
+  ufw:
+    logging: "low"
+
+- name: config ufw - limit ssh
+  ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+    comment: protect ssh from crude brute force attempts
+
+- name: config ufw - allow ports
+  ufw:
+    rule: allow
+    port: "{{item.port}}"
+    proto: "{{item.proto}}"
+    comment: pihole server
+  with_items:
+    - {"port": 53, "proto": "tcp"}
+    - {"port": 53, "proto": "udp"}
+    - {"port": 80, "proto": "tcp"}
+    - {"port": 80, "proto": "udp"}
+
+- name: config ufw - enable ufw
+  ufw:
+    state: enabled
+    policy: deny
+
+# ##################### docker user prep #####################
+
+- name: create docker folder for docker user
+  file:
+    path: "{{item}}"
+    owner: "{{docker_user}}"
+    group: "{{docker_user}}"
+    mode: '0755' # drwxrwxr-x
+    state: directory
+  with_items:
+    - "{{config_folder}}"
+    - "{{dnscrypt_folder}}"
+    - "{{pihole_folder}}"
+    - "{{pihole_pihole_folder}}"
+    - "{{pihole_dnsmasqd_folder}}"
+
+# ##################### dnscrypt #####################
+
+- name: deploy dnscrypt config
+  copy:
+    src: dnscrypt-proxy.toml
+    dest: "{{dnscrypt_config}}"
+    owner: "{{docker_user}}"
+    group: "{{docker_user}}"
+    mode: '0644'
+
+- name: deploy dnscrypt image
+  docker_container:
+    state: started
+    recreate: true
+    name: dnscrypt
+    image: gists/dnscrypt-proxy
+    restart_policy: unless-stopped
+    volumes:
+      - "{{dnscrypt_config}}:/etc/dnscrypt-proxy/dnscrypt-proxy.toml"
+    published_ports:
+      - 127.0.0.1:5353:5353/udp
+      - 127.0.0.1:5353:5353/tcp
+
+# ##################### pihole #####################
+
+- name: deploy pihole image
+  docker_container:
+    state: started
+    recreate: true
+    name: pihole
+    image: pihole/pihole
+    restart_policy: unless-stopped
+    network_mode: host
+    env:
+      TZ: "Europe/Paris"
+      PIHOLE_DNS_: "127.0.0.1#5353"
+      REV_SERVER: "true"
+      REV_SERVER_DOMAIN: "lan"
+      REV_SERVER_TARGET: "192.168.0.1"
+      REV_SERVER_CIDR: "192.168.0.0/16"
+      WEBTHEME: "default-darker"
+      WEBPASSWORD: "{{pihole_password}}"
+      DNSMASQ_LISTENING: "all"
+    volumes:
+      - "{{pihole_pihole_folder}}:/etc/pihole"
+      - "{{pihole_dnsmasqd_folder}}:/etc/dnsmasq.d"
+    capabilities:
+      - CAP_NET_BIND_SERVICE
+      - CAP_SYS_NICE
+      - CAP_CHOWN

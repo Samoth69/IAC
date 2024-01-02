@@ -1,3 +1,12 @@
+- name: get installed packages
+  package_facts:
+    manager: auto
+
+- name: fail if docker isn't installed
+  fail:
+    msg: Docker engine need to be installed
+  when: "'docker-ce' not in ansible_facts.packages"
+
 - name: create user podboy
   user:
     name: podboy
@@ -5,3 +14,21 @@
     password_lock: yes
     password: "!"
     shell: /bin/bash
+
+- name: check if docker is started and enabled at boot
+  systemd:
+    name: "{{item}}"
+    state: started
+    enabled: true
+  with_items:
+    - docker.service
+    - containerd.service
+
+- name: logging driver config docker
+  copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0444
+  notify: restart docker
