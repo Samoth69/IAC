@@ -1,1 +1,2 @@
 hostname: "PiHoleBeta"
+watchtower_schedule: "0 0 4 * * SUN"

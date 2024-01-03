@@ -11,11 +11,8 @@
         "--cleanup",
         "--include-restarting",
         "--schedule",
-        "0 0 4 * * *",
+        "{{ watchtower_schedule | default('0 0 4 * * *') }}",
         "--rolling-restart",
         "--stop-timeout",
         "20m",
-        # "--notification-url",
-        # "{{ url_discord }}",
       ]
-  # when: url_discord is defined
