@@ -8,10 +8,8 @@ curl -sfL https://get.k3s.io | sh -s - --flannel-backend host-gw --secrets-encry
 
 > voir `/var/lib/rancher/k3s/server/token` pour avoir le token du serveur pour connecter des nodes
 
-## storage class
-
-local
+## lvm sc
 
 ```bash
-
+kubectl apply -f https://openebs.github.io/charts/lvm-operator.yaml
 ```

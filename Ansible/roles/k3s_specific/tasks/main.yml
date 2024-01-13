@@ -3,3 +3,11 @@
     name: firewalld
     state: stopped
     enabled: false
+
+- name: load custom modules
+  copy:
+    src: modules.conf
+    dest: /etc/modules-load.d/modules.conf
+    owner: root
+    group: root
+    mode: '0644'
