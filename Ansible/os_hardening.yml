@@ -11,3 +11,5 @@
     os_auth_pam_passwdqc_enable: false
     os_security_kernel_enable_module_loading: false
     os_security_auto_logout: 3600 # 1 heure
+    sysctl_overwrite:
+      vm.max_map_count: 262144

@@ -1,0 +1,5 @@
+- name: config spécifique cluster k3s
+  become: yes
+  hosts: k3s
+  roles:
+    - k3s_specific

@@ -1,0 +1,11 @@
+- name: base setup
+  import_playbook: base-pb.yml
+
+- name: os hardening
+  import_playbook: os_hardening.yml
+
+- name: auto update rhel pb
+  import_playbook: auto_update_rhel_pb.yml
+
+- name: k3s specific
+  import_playbook: k3s_specific.yml
