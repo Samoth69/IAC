@@ -1,0 +1,6 @@
+app:
+  ingress:
+    enabled: false
+  security:
+    networkPolicy:
+      ingressDenyAll: true

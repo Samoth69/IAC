@@ -1,7 +1,7 @@
 # install
 
 ```bash
-helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
+helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard -f values.yml
 kubectl -n kubernetes-dashboard apply -f dashboard.yml
 ```
 
