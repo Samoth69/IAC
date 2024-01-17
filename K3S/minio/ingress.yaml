@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingress-minio
+  namespace: minio
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`minio.k3s.samoth.eu`)
+    kind: Rule
+    services:
+    - name: my-minio
+      port: 9001

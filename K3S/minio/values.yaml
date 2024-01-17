@@ -1,0 +1,21 @@
+auth:
+  existingSecret: minio-secret
+provisioning:
+  cleanupAfterFinished:
+    enabled: true
+    seconds: 604800
+resources:
+  limits:
+    cpu: "2"
+    memory: 2048Mi
+  requests:
+    cpu: 50m
+    memory: 128Mi
+startupProbe:
+  enabled: true
+persistence:
+  size: 10Gi
+volumePermissions:
+  enabled: true
+serviceAccount:
+  name: "minio-service-account"
