@@ -17,6 +17,8 @@
       - git
     state: latest
 
+# TODO: ajouter des paquets de débug réseau de base (dig, ip...) => https://www.tecmint.com/install-dig-and-nslookup-in-linux/
+
 - name: copy custom template for zsh
   become: yes
   become_user: '{{ user.username }}'
