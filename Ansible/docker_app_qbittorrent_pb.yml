@@ -1,5 +1,3 @@
----
-
 - name: installation de qbittorrent fedora
   become: yes
   hosts: qbittorrent
