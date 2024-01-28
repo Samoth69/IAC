@@ -1,0 +1,16 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: harbor-database
+spec:
+  teamId: "harbor"
+  volume:
+    size: 2Gi
+  numberOfInstances: 1
+  users:
+    harbor:  # database owner
+    - createdb
+  databases:
+    registry: harbor  # dbname: owner
+  postgresql:
+    version: "15"

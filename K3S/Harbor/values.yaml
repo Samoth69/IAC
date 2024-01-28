@@ -1,0 +1,24 @@
+database:
+  type: external
+  external:
+    host: harbor-database
+    port: "5432"
+    username: harbor
+    coreDatabase: "registry"
+    existingSecret: harbor.harbor-database.credentials.postgresql.acid.zalan.do
+    sslmode: require
+persistence:
+  persistentVolumeClaim:
+    registry:
+      storageClass: sc-lvm
+      size: 10Gi
+    jobservice:
+      jobLog:
+        storageClass: sc-lvm
+        size: 1Gi
+    redis:
+      storageClass: sc-lvm
+      size: 1Gi
+    trivy:
+      storageClass: sc-lvm
+      size: 5Gi

@@ -1,0 +1,21 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: harbor
+  namespace: harbor
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`harbor.k3s.samoth.eu`)
+    kind: Rule
+    services:
+    - name: my-harbor-portal
+      namespace: harbor
+      port: 80
+  - match: Host(`harbor.k3s.samoth.eu`) && PathPrefix(`/api/`, `/service/`, `/v2/`, `/chartrepo/`, `/c/`)
+    kind: Rule
+    services:
+    - name: my-harbor-core
+      namespace: harbor
+      port: 80
