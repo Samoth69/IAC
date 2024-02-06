@@ -7,11 +7,12 @@
 
 # ##################### Firewall #####################
 
-- name: install ufw
+- name: install needed/useful packages
   package:
     name:
       - ufw
-    state: present
+      - net-tools
+    state: latest
 
 - name: config ufw - logging
   ufw:
@@ -74,10 +75,12 @@
     image: gists/dnscrypt-proxy
     restart_policy: unless-stopped
     volumes:
-      - "{{dnscrypt_config}}:/etc/dnscrypt-proxy/dnscrypt-proxy.toml"
+      - "{{dnscrypt_config}}:/etc/dnscrypt-proxy/dnscrypt-proxy.toml:ro"
     published_ports:
-      - 127.0.0.1:5353:5353/udp
-      - 127.0.0.1:5353:5353/tcp
+      - "127.0.0.1:5353:5353/udp"
+      - "127.0.0.1:5353:5353/tcp"
+      - "[::]:5353:5353/udp"
+      - "[::]:5353:5353/tcp"
 
 # ##################### pihole #####################
 
