@@ -15,7 +15,7 @@
 - name: copy custom resolv file
   copy:
     src: resolv-custom.conf
-    dest: /etc/revolv-custom.conf
+    dest: /etc/resolv-custom.conf
     owner: root
     group: root
     mode: '0444'
