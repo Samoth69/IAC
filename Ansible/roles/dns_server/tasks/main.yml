@@ -54,8 +54,8 @@
   with_items:
     - "{{config_folder}}"
     - "{{dnscrypt_folder}}"
-    - "{{pihole_folder}}"
-    - "{{pihole_pihole_folder}}"
+    - "{{pihole_folder}}" 
+    # - "{{pihole_pihole_folder}}" TODO: les droits de ce dossier sont changés au démarrage et l'appli et ces droits sont nécessaires au bon fonctionnement de pihole
     - "{{pihole_dnsmasqd_folder}}"
 
 # ##################### dnscrypt #####################

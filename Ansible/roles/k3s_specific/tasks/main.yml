@@ -11,3 +11,11 @@
     owner: root
     group: root
     mode: '0644'
+
+- name: copy custom resolv file
+  copy:
+    src: resolv-custom.conf
+    dest: /etc/revolv-custom.conf
+    owner: root
+    group: root
+    mode: '0444'
