@@ -1,0 +1,16 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: gitea-database
+spec:
+  teamId: "gitea"
+  volume:
+    size: 5Gi
+  numberOfInstances: 1
+  users:
+    gitea:  # database owner
+    - createdb
+  databases:
+    gitea: gitea  # dbname: owner
+  postgresql:
+    version: "15"

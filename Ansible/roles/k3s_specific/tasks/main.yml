@@ -19,3 +19,11 @@
     owner: root
     group: root
     mode: '0444'
+
+- name: ca-certificates symbolic link
+  file:
+    src: /etc/ssl/certs/ca-bundle.crt
+    dest: /etc/ssl/certs/ca-certificates.crt
+    owner: root
+    group: root
+    state: link

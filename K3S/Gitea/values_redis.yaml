@@ -1,0 +1,7 @@
+architecture: standalone
+auth:
+  existingSecret: redis-secret
+  existingSecretPasswordKey: password
+master:
+  persistence:
+    storageClass: sc-lvm

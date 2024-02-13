@@ -1,0 +1,53 @@
+redis-cluster:
+  enabled: false
+postgresql:
+  enabled: false
+postgresql-ha:
+  enabled: false
+
+persistence:
+  enabled: true
+  storageClass: "sc-lvm"
+
+gitea:
+  additionalConfigFromEnvs:
+    - name: GITEA__DATABASE__PASSWD
+      valueFrom:
+        secretKeyRef:
+          name: gitea.gitea-database.credentials.postgresql.acid.zalan.do
+          key: password
+    - name: GITEA__CACHE__HOST
+      valueFrom:
+        secretKeyRef:
+          name: redis-secret
+          key: redisConnString0
+    - name: GITEA__QUEUE__CONN_STR
+      valueFrom:
+        secretKeyRef:
+          name: redis-secret
+          key: redisConnString1
+  config:
+    database:
+      DB_TYPE: postgres
+      HOST: gitea-database.gitea
+      NAME: gitea
+      USER: gitea
+      SSL_MODE: require
+    session:
+      PROVIDER: db
+    cache:
+      ADAPTER: redis
+    queue:
+      TYPE: redis
+    indexer:
+      ISSUE_INDEXER_TYPE: bleve
+      REPO_INDEXER_ENABLED: true
+    server:
+      OFFLINE_MODE: "true"
+      DOMAIN: gitea.k3s.samoth.eu
+      DISABLE_SSH: "true"
+    cors:
+      ENABLED: "true"
+      ALLOW_DOMAIN: gitea.k3s.samoth.eu
+    service:
+      DISABLE_REGISTRATION: "true"
