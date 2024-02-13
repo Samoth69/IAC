@@ -45,9 +45,10 @@ gitea:
     server:
       OFFLINE_MODE: "true"
       DOMAIN: gitea.k3s.samoth.eu
+      ROOT_URL: https://gitea.k3s.samoth.eu/
       DISABLE_SSH: "true"
     cors:
       ENABLED: "true"
-      ALLOW_DOMAIN: gitea.k3s.samoth.eu
+      ALLOW_DOMAIN: https://gitea.k3s.samoth.eu/
     service:
       DISABLE_REGISTRATION: "true"
