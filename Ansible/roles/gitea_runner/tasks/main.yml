@@ -1,0 +1,13 @@
+- name: install act_runner
+  docker_container:
+    name: act_runner
+    image: gitea/act_runner
+    restart_policy: unless-stopped
+    volumes:
+      - /home/podboy/docker/data/act_runner:/data:Z
+      - /var/run/docker.sock:/var/run/docker.sock
+    env:
+      GITEA_INSTANCE_URL: https://gitea.k3s.samoth.eu/
+      GITEA_RUNNER_REGISTRATION_TOKEN: "{{ runner_registration_token }}"
+      GITEA_RUNNER_NAME: "{{ansible_hostname}}"
+      GITEA_RUNNER_LABELS: "ubuntu-latest:docker://ghcr.io/catthehacker/ubuntu:act-latest,ubuntu-22.04:docker://ghcr.io/catthehacker/ubuntu:act-22.04,ubuntu-20.04:docker://ghcr.io/catthehacker/ubuntu:act-20.04"

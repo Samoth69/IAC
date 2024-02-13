@@ -6,6 +6,3 @@
 
 - name: auto update rhel pb
   import_playbook: auto_update_rhel_pb.yml
-
-- name: k3s specific
-  import_playbook: k3s_specific.yml

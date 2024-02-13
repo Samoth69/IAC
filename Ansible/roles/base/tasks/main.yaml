@@ -10,6 +10,7 @@
   become: yes
   package:
     name:
+      - qemu-guest-agent
       - htop
       - bmon
       - curl
