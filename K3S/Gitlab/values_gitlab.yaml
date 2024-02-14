@@ -7,19 +7,7 @@ prometheus:
 certmanager:
   install: false
 nginx-ingress:
-  # Disable the deployment of the in-chart NGINX Ingress provider.
   enabled: false
-
-traefik:
-  install: false
-  # Ensure the IngressClass name and `global.ingress.class` value match.
-  # This can be removed if `global.ingress.class` is set to `$releaseName-traefik`.
-  fullnameOverride: traefik
-  ingressClass:
-    # Create an IngressClass object for Traefik.
-    enabled: false
-    # Helps an avoid error when making local templates.
-    fallbackApiVersion: v1
 
 gitlab:
   webservice:
