@@ -25,20 +25,6 @@ spec:
             - main: "k3s.samoth.eu"
               sans:
                 - "*.k3s.samoth.eu"
-      internet:
-        port: 9443
-        expose: true
-        exposedPort: 9443
-        protocol: TCP
-        middlewares:
-          - middleware-internet-ratelimit@kubernetescrd
-        tls:
-          enabled: true
-          certResolver: letsencrypt
-          domains:
-            - main: "k3s.samoth.eu"
-              sans:
-                - "*.k3s.samoth.eu"
     tlsOptions:
       default:
         minVersion: VersionTLS13

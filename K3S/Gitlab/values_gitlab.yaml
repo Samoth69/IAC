@@ -6,6 +6,20 @@ prometheus:
   install: false
 certmanager:
   install: false
+nginx-ingress:
+  # Disable the deployment of the in-chart NGINX Ingress provider.
+  enabled: false
+
+traefik:
+  install: false
+  # Ensure the IngressClass name and `global.ingress.class` value match.
+  # This can be removed if `global.ingress.class` is set to `$releaseName-traefik`.
+  fullnameOverride: traefik
+  ingressClass:
+    # Create an IngressClass object for Traefik.
+    enabled: false
+    # Helps an avoid error when making local templates.
+    fallbackApiVersion: v1
 
 gitlab:
   webservice:
@@ -40,9 +54,35 @@ global:
   hosts:
     domain: k3s.samoth.eu
     https: false
+    registry:
+      name: gitlab-registry.k3s.samoth.eu
+      https: false
+    minio:
+      name: gitlab-minio.k3s.samoth.eu
+      https: false
+    kas:
+      name: gitlab-kas.k3s.samoth.eu
   ingress:
-    class: none
     configureCertmanager: false
+    # Default, present here to be explicit.
+    enabled: true
+    # Toggle the TCP configuration and annotations to Traefik.
+    provider: traefik
+    # Alter the `kubernetes.io/ingress.class` annotation or
+    # `spec.ingressClassName` value chart-wide.
+    class: traefik
+    annotations:
+      # Tell Traefik that we've configured TLS
+      # NOTE: disable this if `global.ingress.tls.enabled=false`.
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      # Ensure the HTTP Routes only listen on 443, rather than all entrypoints.
+      # NOTE: set the value to `web` if `global.ingress.tls.enabled=false`.
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  # Tell the gitlab-shell chart which traefik entrypoint to use
+  # Default, present here to be explicit. 
+  gitlab-shell:
+    traefik:
+      entrypoint: "gitlab-shell"
   psql:
     host: gitlab-database.gitlab
     port: 5432
