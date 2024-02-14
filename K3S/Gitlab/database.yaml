@@ -1,0 +1,16 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: gitlab-database
+spec:
+  teamId: "gitlab"
+  volume:
+    size: 5Gi
+  numberOfInstances: 1
+  users:
+    gitlab:  # database owner
+    - createdb
+  databases:
+    gitlab: gitlab  # dbname: owner
+  postgresql:
+    version: "15"
