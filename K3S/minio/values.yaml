@@ -19,3 +19,7 @@ volumePermissions:
   enabled: true
 serviceAccount:
   name: "minio-service-account"
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hostname: minio.k3s.samoth.eu
