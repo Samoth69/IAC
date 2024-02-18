@@ -13,6 +13,7 @@ curl -sfL https://get.k3s.io | sh -s - agent --token '' --server https://192.168
 ## lvm sc
 
 ```bash
+kubectl apply -f https://openebs.github.io/charts/openebs-operator.yaml
 kubectl apply -f https://openebs.github.io/charts/lvm-operator.yaml
 kubectl apply -f sc_lvm.yml
 kubectl apply -f traefik_secret.yml

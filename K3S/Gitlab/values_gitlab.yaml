@@ -10,8 +10,8 @@ nginx-ingress:
   enabled: false
 minio:
   install: false
-redis:
-  install: false
+registry:
+  enabled: false
 
 gitlab:
   webservice:
@@ -23,6 +23,8 @@ gitlab:
       requests:
         cpu: 100m
         memory: 900M
+    registry:
+      enabled: false
   workhorse:
     resources:
       limits:
@@ -39,6 +41,8 @@ gitlab:
       requests:
         cpu: 50m
         memory: 625M
+    registry:
+      enabled: false
   gitlab-shell:
     minReplicas: 1
     maxReplicas: 1
@@ -64,11 +68,13 @@ gitlab:
       requests:
         cpu: 10m
         memory: 64Mi
-
-registry:
-  hpa:
-    minReplicas: 1
-    maxReplicas: 1
+    backups:
+      objectStorage:
+        config:
+          secret: gitlab-backup-storage
+          key: config
+    registry:
+      enabled: false
 
 global:
   edition: ce
@@ -77,9 +83,6 @@ global:
     https: false
     registry:
       name: gitlab-registry.k3s.samoth.eu
-      https: false
-    minio:
-      name: gitlab-minio.k3s.samoth.eu
       https: false
     kas:
       name: gitlab-kas.k3s.samoth.eu
@@ -99,3 +102,23 @@ global:
       key: password
   minio:
     enabled: false
+  registry:
+    enabled: false
+  appConfig:
+    lfs:
+      enabled: false
+    artifacts:
+      bucket: gitlab-artifacts
+      connection:
+        secret: gitlab-object-storage
+        key: connection
+    uploads:
+      bucket: gitlab-uploads
+      connection:
+        secret: gitlab-object-storage
+        key: connection
+    packages:
+      enabled: false
+    backups:
+      bucket: gitlab-backup
+      tmpBucket: gitlab-backup-tmp

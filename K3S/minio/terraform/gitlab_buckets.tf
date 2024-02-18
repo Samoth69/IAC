@@ -1,5 +1,5 @@
 resource "minio_s3_bucket" "gitlab_buckets" {
-  for_each = toset(["registry", "lfs", "artifacts", "uploads", "packages", "backup"])
+  for_each = toset(["artifacts", "uploads", "backup", "backup-tmp"])
   bucket   = "gitlab-${each.key}"
   acl      = "private"
 }
