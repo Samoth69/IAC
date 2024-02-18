@@ -23,3 +23,7 @@ ingress:
   enabled: true
   ingressClassName: traefik
   hostname: minio.k3s.samoth.eu
+apiIngress:
+  enabled: true
+  ingressClassName: traefik
+  hostname: minio-api.k3s.samoth.eu
