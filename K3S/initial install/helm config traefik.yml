@@ -58,3 +58,5 @@ spec:
           volumeMounts:
           - mountPath: /data
             name: data
+    nodeSelector:
+      kubernetes.io/hostname: k3sakame

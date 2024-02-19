@@ -7,10 +7,12 @@ metadata:
 allowVolumeExpansion: true
 provisioner: local.csi.openebs.io
 parameters:
+  storage: "lvm"
   volgroup: "m2vg"
   shared: "yes"             ## Parameter that states volume can be shared among multiple pods
   thinProvision: "yes"
 volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
 allowedTopologies:
   - matchLabelExpressions:
     - key: openebs.io/nodename
