@@ -9,10 +9,10 @@ resource "kubernetes_secret" "kube_secret" {
     connection = yamlencode({
       provider              = "AWS"
       region                = "us-east-1"
-      regionendpoint        = "https://minio-api.k3s.samoth.eu"
+      endpoint              = "https://minio-api.k3s.samoth.eu"
       aws_access_key_id     = minio_iam_user.iam_user.id
       aws_secret_access_key = minio_iam_user.iam_user.secret
-      v4auth                = true
+      path_style            = true
     })
   }
 }
@@ -29,5 +29,28 @@ resource "kubernetes_secret" "kube_backup_secret" {
       "access_key" : minio_iam_user.iam_user.id,
       "secret_key" : minio_iam_user.iam_user.secret,
     })
+  }
+}
+
+resource "kubernetes_secret" "kube_registry_secret" {
+  metadata {
+    namespace = "gitlab"
+    name      = "gitlab-registry-storage"
+  }
+
+  type = "opaque"
+
+  data = {
+    connection = yamlencode({
+      s3 : {
+        bucket         = "gitlab-registry"
+        accesskey      = minio_iam_user.iam_user.id
+        secretkey      = minio_iam_user.iam_user.secret
+        region         = "us-east-1"
+        v4auth         = true
+        regionendpoint = "https://minio-api.k3s.samoth.eu"
+      }
+      }
+    )
   }
 }
