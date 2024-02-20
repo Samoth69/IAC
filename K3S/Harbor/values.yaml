@@ -1,9 +1,4 @@
 externalURL: https://harbor.k3s.samoth.eu
-expose:
-  ingress:
-    hosts:
-      core: harbor.k3s.samoth.eu
-    className: traefik
 database:
   type: external
   external:
@@ -24,12 +19,12 @@ persistence:
     redis:
       storageClass: sc-lvm
       size: 1Gi
-    trivy:
-      storageClass: sc-lvm
-      size: 5Gi
   imageChartStorage:
+    type: s3
     s3:
       existingSecret: harbor-object-storage
       region: us-east-1
       bucket: harbor-registry
-      regionendpoint: https://minio.k3s.samoth.eu
+      regionendpoint: https://minio-api.k3s.samoth.eu
+trivy:
+  enabled: false
