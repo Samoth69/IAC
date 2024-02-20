@@ -1,0 +1,10 @@
+- name: install gitlab runner
+  docker_container:
+    name: gitlab_runner
+    image: gitlab/gitlab-runner:latest
+    restart_policy: unless-stopped
+    volumes:
+      - /srv/gitlab-runner/config:/etc/gitlab-runner:Z
+      - /var/run/docker.sock:/var/run/docker.sock
+    env:
+      TZ: Europe/Paris

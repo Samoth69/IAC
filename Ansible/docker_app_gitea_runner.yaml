@@ -1,8 +1,0 @@
-- name: setup gitea runner
-  become: yes
-  hosts: gitea_runner
-  roles:
-    - gitea_runner
-  vars_prompt:
-    - name: runner_registration_token
-      prompt: enter gitea runner registration token

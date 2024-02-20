@@ -1,0 +1,5 @@
+- name: setup gitlab runner
+  become: yes
+  hosts: gitlab_runner
+  roles:
+    - gitlab_runner

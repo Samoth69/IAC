@@ -91,6 +91,13 @@ global:
     enabled: true
     provider: traefik
     class: traefik
+    tls:
+      enabled: false
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  gitlab-shell:
+    traefik:
+      entrypoint: "gitlab-shell"
   psql:
     host: gitlab-database.gitlab
     port: 5432
