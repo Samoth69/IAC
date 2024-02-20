@@ -1,8 +1,9 @@
+externalURL: https://harbor.k3s.samoth.eu
 expose:
   ingress:
     hosts:
-      core: harbor.tail657f8.ts.net
-    className: tailscale
+      core: harbor.k3s.samoth.eu
+    className: traefik
 database:
   type: external
   external:
@@ -15,8 +16,7 @@ database:
 persistence:
   persistentVolumeClaim:
     registry:
-      storageClass: sc-lvm
-      size: 10Gi
+      storageClass: "-"
     jobservice:
       jobLog:
         storageClass: sc-lvm
@@ -27,3 +27,9 @@ persistence:
     trivy:
       storageClass: sc-lvm
       size: 5Gi
+  imageChartStorage:
+    s3:
+      existingSecret: harbor-object-storage
+      region: us-east-1
+      bucket: harbor-registry
+      regionendpoint: https://minio.k3s.samoth.eu
