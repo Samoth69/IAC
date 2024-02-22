@@ -1,3 +1,11 @@
+- name: copy config
+  copy:
+    src: config.toml
+    dest: /srv/gitlab-runner/config/config.toml
+    owner: root
+    group: root
+    mode: "0600"
+
 - name: install gitlab runner
   docker_container:
     name: gitlab_runner
@@ -8,3 +16,5 @@
       - /var/run/docker.sock:/var/run/docker.sock
     env:
       TZ: Europe/Paris
+    state: started
+    restart: true
