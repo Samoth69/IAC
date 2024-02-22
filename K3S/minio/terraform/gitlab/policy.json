@@ -8,7 +8,7 @@
     },
     {
       "Effect": "Allow",
-      "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"],
+      "Action": ["s3:*"],
       "Resource": ["arn:aws:s3:::gitlab-*/*"]
     }
   ]

@@ -73,6 +73,8 @@ global:
     https: true
     kas:
       name: gitlab-kas.k3s.samoth.eu
+    registry:
+      name: gitlab-registry.k3s.samoth.eu
   ingress:
     configureCertmanager: false
     enabled: true
