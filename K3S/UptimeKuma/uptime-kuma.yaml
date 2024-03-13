@@ -14,6 +14,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: uptime-kuma
+  annotations:
+    keel.sh/policy: all
+    keel.sh/trigger: poll
+    keel.sh/approvals: "1"
 spec:
   selector:
     matchLabels:

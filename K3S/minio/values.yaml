@@ -4,6 +4,10 @@ provisioning:
   cleanupAfterFinished:
     enabled: true
     seconds: 604800
+commonAnnotations:
+  keel.sh/policy: major
+  keel.sh/trigger: poll
+  keel.sh/approvals: "1"
 resources:
   limits:
     cpu: "2"

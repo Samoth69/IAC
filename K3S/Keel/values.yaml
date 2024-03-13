@@ -1,0 +1,62 @@
+image:
+  repository: keelhq/keel
+  tag: latest
+  pullPolicy: Always
+
+polling:
+  defaultSchedule: "@every 1h"
+
+# Helm provider support
+helmProvider:
+  enabled: true
+  # set to version "v3" for Helm v3
+  version: "v3"
+
+secret:
+  name: keel
+  create: false
+
+discord:
+  enabled: true
+
+# Keel self-update
+# uncomment lines below if you want Keel to automaticly
+# self-update to the latest release version
+keel:
+  # keel policy (all/major/minor/patch/force)
+  policy: all
+  # trigger type, defaults to events such as pubsub, webhooks
+  trigger: poll
+  # polling schedule
+  pollSchedule: "@every 1h"
+  # images to track and update
+  images:
+    - repository: image.repository
+      tag: image.tag
+
+# Keel service
+# Enable to receive webhooks from Docker registries
+service:
+  enabled: true
+  type: LoadBalancer
+  externalPort: 9300
+  clusterIP: ""
+
+ingress:
+  enabled: true
+  labels: {}
+  annotations:
+    spec.ingressClassName: traefik
+  hosts:
+    - host: keel.k3s.samoth.eu
+      paths:
+        - /
+  tls: []
+#    - secretName: chart-example-tls
+#      hosts:
+#        - chart-example.local
+
+persistence:
+  enabled: true
+  storageClass: "sc-lvm"
+  size: 1Gi
