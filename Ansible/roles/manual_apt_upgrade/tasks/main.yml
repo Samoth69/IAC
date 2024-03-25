@@ -1,0 +1,5 @@
+- name: apt update && apt upgrade && apt autoremove
+  apt:
+    autoremove: true
+    update_cache: true
+    upgrade: safe
