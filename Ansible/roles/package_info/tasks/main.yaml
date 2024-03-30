@@ -1,0 +1,7 @@
+- name: get packages info
+  package_facts:
+    manager: auto
+
+- name: print xz version
+  debug:
+    msg: "xz: {{ ansible_facts.packages['xz'] }}"
