@@ -12,4 +12,7 @@
     os_security_kernel_enable_module_loading: false
     os_security_auto_logout: 3600 # 1 heure
     sysctl_overwrite:
+      # spécifique Sonarqube
       vm.max_map_count: 262144
+      # spécifique Docker/Kubernetes
+      net.ipv4.ip_forward: 1
