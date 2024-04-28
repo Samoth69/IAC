@@ -5,12 +5,19 @@
       - epel-release
     state: latest
   when: ansible_distribution == 'Rocky'
-  
-- name: check if usefull tools are installed
+
+- name: install qemu-guest-agent if this is a vm 
   become: yes
   package:
     name:
       - qemu-guest-agent
+    state: latest
+  when: "ansible_virtualization_role == 'guest' and ansible_virtualization_type == 'kvm'"
+
+- name: check if usefull tools are installed
+  become: yes
+  package:
+    name:
       - htop
       - bmon
       - curl

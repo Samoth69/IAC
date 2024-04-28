@@ -16,3 +16,5 @@
       vm.max_map_count: 262144
       # spécifique Docker/Kubernetes
       net.ipv4.ip_forward: 1
+      # à appliquer sur les systèmes sous arm
+      # vm.mmap_rnd_bits: 18
