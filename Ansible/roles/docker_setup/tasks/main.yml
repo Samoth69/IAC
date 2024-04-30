@@ -15,6 +15,14 @@
     password: "!"
     shell: /bin/bash
 
+- name: create podboy docker folder
+  file:
+    path: /home/podboy/docker
+    group: podboy
+    owner: podboy
+    mode: u=rwx
+    state: directory
+
 - name: check if docker is started and enabled at boot
   systemd:
     name: "{{item}}"
