@@ -105,3 +105,8 @@ source $ZSH/oh-my-zsh.sh
 alias zshconfig="nano ~/.zshrc"
 export EDITOR='nano'
 PATH=$PATH:/home/thomas/.local/bin
+
+# Fix MobaXterm Home/End key with ZSH
+# https://github.com/ohmyzsh/ohmyzsh/issues/4872#issuecomment-302915617
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
