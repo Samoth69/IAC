@@ -1,2 +1,0 @@
-hostname: "PiHoleAlpha"
-watchtower_schedule: "0 0 4 * * SAT"
