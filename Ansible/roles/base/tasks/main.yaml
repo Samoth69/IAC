@@ -6,6 +6,16 @@
     state: latest
   when: ansible_distribution == 'Rocky'
 
+- name: get packages info
+  package_facts:
+    manager: auto
+
+- name: set network settings if nmcli is available
+  become: yes
+  import_tasks:
+    file: network.yml
+  when: "'NetworkManager' in ansible_facts.packages"
+
 - name: install qemu-guest-agent and enable if this is a vm 
   become: yes
   block:

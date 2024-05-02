@@ -121,17 +121,19 @@
 
 # ##################### orbital sync #####################
 
-# - name: deploy orbital sync image
-#   docker_container:
-#     state: started
-#     name: orbital_sync
-#     image: mattwebbio/orbital-sync:1
-#     restart_policy: unless-stopped
-#     env:
-#       PRIMARY_HOST_BASE_URL: 'http://192.168.0.2'
-#       PRIMARY_HOST_PASSWORD: '{{pihole_password}}'
-#       SECONDARY_HOST_1_BASE_URL: 'http://192.168.0.3'
-#       SECONDARY_HOST_1_PASSWORD: '{{pihole_password}}'
-#       INTERVAL_MINUTES: '1440'
-#   # filtre à l'arrache pour avoir orbital seulement sur PiHoleAlpha
-#   when: "'192.168.0.2' in ansible_all_ipv4_addresses"
+- name: deploy orbital sync image
+  docker_container:
+    state: started
+    name: orbital_sync
+    image: mattwebbio/orbital-sync:1
+    restart_policy: unless-stopped
+    env:
+      PRIMARY_HOST_BASE_URL: 'http://192.168.0.2'
+      PRIMARY_HOST_PASSWORD: '{{pihole_password}}'
+      SECONDARY_HOST_1_BASE_URL: 'http://192.168.0.3'
+      SECONDARY_HOST_1_PASSWORD: '{{pihole_password}}'
+      INTERVAL_MINUTES: '1440'
+  # filtre à l'arrache pour avoir orbital seulement sur PiHoleAlpha
+  when: "'192.168.0.2' in ansible_all_ipv4_addresses"
+
+# #####################  #####################
