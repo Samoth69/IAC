@@ -1,0 +1,11 @@
+global:
+  imagePullPolicy: Always
+ui:
+  dockerRegistryUrl: https://registry.lab.samoth.eu/
+  registrySecured: true
+  deleteImages: true
+  ingress:
+    enabled: true
+    host: registry-ui.lab.samoth.eu
+    ingressClassName: traefik
+  image: joxit/docker-registry-ui:latest
