@@ -3,7 +3,6 @@ kind: ServersTransport
 metadata:
   name: kubernetes-dashboard-transport
   namespace: kubernetes-dashboard
-
 spec:
   serverName: kubernetes-dashboard
   insecureSkipVerify: true
@@ -16,11 +15,11 @@ metadata:
   namespace: kubernetes-dashboard
 spec:
   entryPoints:
-    - websecure
+    - web
   routes:
-  - match: Host(`dashboard.k3s.samoth.eu`)
+  - match: Host(`dashboard.lab.samoth.eu`)
     kind: Rule
     services:
-    - name: kubernetes-dashboard
+    - name: kubernetes-dashboard-kong-proxy
       port: 443
       serversTransport: kubernetes-dashboard-transport
