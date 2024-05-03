@@ -117,6 +117,7 @@ os_http_port: 1180
 # Network config
 #-----------------------
 network_conn_name: "{{ansible_default_ipv4.alias}}"
+ipv4_addresses: []
 ipv4_gateway: 192.168.0.1
 ipv4_dns:
   - 192.168.0.2
@@ -125,6 +126,7 @@ ipv4_domains:
   - lan
 ipv4_routes: []
 
+ipv6_addresses: []
 ipv6_gateway: fe80::2266:cfff:fe83:760a
 ipv6_dns:
   - fe80::2
