@@ -2,16 +2,13 @@
 # OH MY ZSH
 #-----------------------
 
-oh_my_zsh_theme: headline
+oh_my_zsh_theme: intheloop
 
 # Default plugins
 oh_my_zsh_plugins:
   - git
   - docker
   - docker-compose
-  - terraform
-  - ansible
-  - kubectl
 
 # Whether to install by default for all specified users.
 # May be overridden by `oh_my_zsh: install:` under each user.

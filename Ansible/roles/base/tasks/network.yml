@@ -1,3 +1,12 @@
+# ############################ pré-requis ###############################
+# peut être nécessaire pour éviter le playbook de crash si jamais la version de nmcli ne colle pas avec la version de NetworkManager
+# ce produit généralement en cas de maj coté rocky linux
+- name: restart network manager
+  systemd:
+    name: NetworkManager
+    state: restarted
+  register: net_restarting
+
 # ############################ IPv4 ###############################
 
 - name: set IPv4 addresses and gateway if defined

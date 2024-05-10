@@ -43,12 +43,37 @@
 
 # TODO: ajouter des paquets de débug réseau de base (dig, ip...) => https://www.tecmint.com/install-dig-and-nslookup-in-linux/
 
+- name: update ohmyzsh repo
+  become: yes
+  become_user: '{{ user.username }}'
+  git:
+    repo: https://github.com/ohmyzsh/ohmyzsh.git
+    dest: ~{{ user.username }}/.oh-my-zsh
+    update: yes
+  with_items: '{{ users }}'
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: '{{ user.username }}'
+
 - name: copy custom template for zsh
   become: yes
   become_user: '{{ user.username }}'
   copy:
-    src: templates/headline.zsh-theme
-    dest: '~{{ user.username }}/.oh-my-zsh/custom/themes/headline.zsh-theme'
+    src: files/intheloop.zsh-theme
+    dest: '~{{ user.username }}/.oh-my-zsh/custom/themes/intheloop.zsh-theme'
+  with_items: '{{ users }}'
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: '{{ user.username }}'
+
+- name: clean old template
+  become: yes
+  become_user: '{{ user.username }}'
+  file:
+    path: '~{{ user.username }}/.oh-my-zsh/custom/themes/headline.zsh-theme'
+    state: absent
   with_items: '{{ users }}'
   when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
   loop_control:
