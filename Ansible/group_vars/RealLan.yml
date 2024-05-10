@@ -1,0 +1,18 @@
+ipv4_addresses: []
+ipv4_gateway: 192.168.0.1
+ipv4_dns:
+  - 192.168.0.2
+  - 192.168.0.3
+ipv4_domains:
+  - lan
+ipv4_routes: []
+
+ipv6_addresses: []
+ipv6_gateway: fe80::2266:cfff:fe83:760a
+ipv6_dns:
+  - fe80::2
+  - fe80::3
+ipv6_domains:
+  - lan
+ipv6_routes:
+  - 2a01:e0a:5c9:f0a1::/64 fe80::be24:11ff:fefa:93
