@@ -12,7 +12,6 @@
         "--include-restarting",
         "--schedule",
         "{{ watchtower_schedule | default('0 0 4 * * *') }}",
-        "--rolling-restart",
         "--stop-timeout",
         "20m",
       ]
