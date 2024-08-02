@@ -35,6 +35,7 @@
   package:
     name:
       - htop
+      - btop
       - bmon
       - curl
       - nano

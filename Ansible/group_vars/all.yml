@@ -47,27 +47,6 @@ seafile_subdomain_name: "seafile"
 seafile_traefik_docker_network_name: "traefik_traefik"
 
 #-----------------------
-# qbittorrent
-#-----------------------
-
-# adresses autorisé pour ssh et samba
-qbt_allowed_lan:
-  - "192.168.0.0/24"
-  - "192.168.2.0/24"
-
-qbt_config_path: /home/thomas/podman/qbt_config
-qbt_container_name: qbt
-qbt_torrent_path: /media/p2p/downloaded
-qbt_torrent_path_2: /media/tank/downloaded
-qbt_torrent_path_3: /media/tank2/downloaded
-# P2P listening port
-qbt_listening_port: 56000
-qbt_user: 1000
-qbt_group: 1000
-qbt_tz: Europe/Paris
-qbt_internal_webui_port: 3000
-
-#-----------------------
 # watchtower
 #-----------------------
 url_discord: discord://IRQB85dsDhG5UBHNmEUQixxeK_gkPrT37vBzZUccw1lbaZFc1akNh-ldeGkBqSyR5XSF@1080877790498406570
