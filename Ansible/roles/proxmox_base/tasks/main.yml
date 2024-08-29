@@ -3,6 +3,7 @@
     name:
       - htop
       - powertop
+      - linux-cpupower
     state: latest
 
 - name: set vzdump config
