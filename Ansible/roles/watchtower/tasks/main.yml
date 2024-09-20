@@ -11,7 +11,7 @@
         "--cleanup",
         "--include-restarting",
         "--schedule",
-        "{{ watchtower_schedule | default('0 0 4 * * *') }}",
+        "{{ watchtower_schedule | default('0 30 7 * * *') }}",
         "--stop-timeout",
         "20m",
       ]
