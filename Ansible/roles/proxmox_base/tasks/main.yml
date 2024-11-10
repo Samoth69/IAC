@@ -2,6 +2,7 @@
   package:
     name:
       - htop
+      - btop
       - powertop
       - linux-cpupower
     state: latest
@@ -19,13 +20,4 @@
     - name: Mini PC only - Enabling turbo (/sys/devices/system/cpu/cpufreq/boost)
       ignore_errors: true
       command: sh -c "echo '1' > /sys/devices/system/cpu/cpufreq/boost"
-
-- name: Copy powertop service file
-  copy:
-    src: templates/powertop.service
-    dest: /etc/systemd/system/powertop.service
-    owner: root
-    group: root
-    mode: u=rw,g=r,o=r
-  notify: Reload systemd and enable powertop
   
