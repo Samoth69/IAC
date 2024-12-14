@@ -3,3 +3,4 @@
     autoremove: true
     update_cache: true
     upgrade: safe
+  notify: "schedule restart"

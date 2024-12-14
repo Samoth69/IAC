@@ -5,6 +5,7 @@
       - btop
       - powertop
       - linux-cpupower
+      - lshw
     state: latest
 
 - name: set vzdump config
