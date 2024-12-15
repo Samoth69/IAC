@@ -1,3 +1,23 @@
+- name: Remove PVE Enterprise repo
+  apt_repository:
+    repo: deb https://enterprise.proxmox.com/debian/pve {{ ansible_distribution_release }} pve-enterprise
+    state: absent
+    filename: pve-enterprise
+
+- name: Add PVE no-subscription repo
+  apt_repository:
+    repo: deb http://download.proxmox.com/debian/pve {{ ansible_distribution_release }} pve-no-subscription
+    state: present
+    filename: pve-no-subscription
+
+- name: Upgrade all system packages
+  apt:
+    upgrade: full
+    update_cache: true
+    cache_valid_time: 3600
+    autoclean: true
+    autoremove: true
+
 - name: install usefull tools
   package:
     name:
@@ -6,7 +26,10 @@
       - powertop
       - linux-cpupower
       - lshw
+      - lm-sensors
+      - fwupdate
     state: latest
+    install_recommends: true
 
 - name: set vzdump config
   template:
@@ -21,4 +44,32 @@
     - name: Mini PC only - Enabling turbo (/sys/devices/system/cpu/cpufreq/boost)
       ignore_errors: true
       command: sh -c "echo '1' > /sys/devices/system/cpu/cpufreq/boost"
-  
+
+- name: "Gather installed packages"
+  package_facts:
+    manager: auto
+
+- name: "Install pve fake subscription"
+  when: "'pve-fake-subscription' not in ansible_facts.packages"
+  block:
+    - name: Get newest pve-fake-subscription release
+      uri:
+        url: https://api.github.com/repos/Jamesits/pve-fake-subscription/releases/latest
+        return_content: true
+      register: json_reponse
+
+    - name: Create tmpdir
+      tempfile:
+        state: directory
+      register: tmpdir
+
+    - name: Download pve-fake-subscription
+      get_url:
+        url: "{{ json_reponse.json.assets[0].browser_download_url }}"
+        dest: "{{ tmpdir.path }}"
+        mode: "0644"
+      register: download
+
+    - name: Install pve-fake-subscription
+      apt:
+        deb: "{{ download.dest }}"
