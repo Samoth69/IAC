@@ -65,3 +65,12 @@ variable "bridge" {
 variable "iso_path" {
   type = string
 }
+
+variable "ip_address" {
+  type = string
+}
+
+variable "ip_gateway" {
+  type = string
+  default = "192.168.1.1"
+}

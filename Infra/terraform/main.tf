@@ -1,4 +1,12 @@
 terraform {
+  cloud {
+    organization = "Samoth"
+
+    workspaces {
+      name = "Milim"
+    }
+  }
+
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
@@ -8,8 +16,8 @@ terraform {
 }
 
 provider "proxmox" {
-  endpoint = "https://192.168.0.7:8006/"
-  insecure = true
+  endpoint  = "https://192.168.0.7:8006/"
+  insecure  = true
   api_token = var.proxmox_ve_token
 
   ssh {

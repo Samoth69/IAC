@@ -38,8 +38,25 @@ resource "proxmox_virtual_environment_vm" "node" {
   }
 
   memory {
-    dedicated = var.memory
+    dedicated = var.memory / 2
     floating  = var.memory
+  }
+
+  initialization {
+    ip_config {
+      ipv4 {
+        address = var.ip_address
+        gateway = var.ip_gateway
+      }
+    }
+    dns {
+      servers = [
+        "192.168.0.2",
+        "192.168.0.3",
+        "fe80::2",
+        "fe80::3",
+      ]
+    }
   }
 
   scsi_hardware = "virtio-scsi-single"
@@ -63,7 +80,7 @@ resource "proxmox_virtual_environment_vm" "node" {
   }
 
   cdrom {
-    enabled   = true
+    enabled   = var.iso_path != null ? true : false
     file_id   = var.iso_path
     interface = "ide0"
   }
