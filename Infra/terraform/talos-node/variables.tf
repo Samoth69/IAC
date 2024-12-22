@@ -63,7 +63,8 @@ variable "bridge" {
 }
 
 variable "iso_path" {
-  type = string
+  type     = string
+  nullable = true
 }
 
 variable "ip_address" {
@@ -71,6 +72,19 @@ variable "ip_address" {
 }
 
 variable "ip_gateway" {
-  type = string
+  type    = string
   default = "192.168.1.1"
+}
+
+variable "mac_address" {
+  type = string
+}
+
+variable "is_master" {
+  type    = bool
+  default = false
+}
+
+variable "kube_node_name" {
+  type = string
 }

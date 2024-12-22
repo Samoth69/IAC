@@ -14,6 +14,12 @@ resource "proxmox_virtual_environment_vm" "node" {
     type = "l26"
   }
 
+  startup {
+    order      = var.is_master ? "1" : "2"
+    up_delay   = var.is_master ? "30" : "90"
+    down_delay = var.is_master ? "60" : "0"
+  }
+
   agent {
     enabled = true
     type    = "virtio"
@@ -31,14 +37,14 @@ resource "proxmox_virtual_environment_vm" "node" {
   machine = "q35"
 
   cpu {
-    architecture = "x86_64"
     cores        = var.cpu_cores
     type         = "host"
     flags        = ["+aes"]
+    units        = 100
   }
 
   memory {
-    dedicated = var.memory / 2
+    dedicated = var.memory
     floating  = var.memory
   }
 
@@ -53,8 +59,6 @@ resource "proxmox_virtual_environment_vm" "node" {
       servers = [
         "192.168.0.2",
         "192.168.0.3",
-        "fe80::2",
-        "fe80::3",
       ]
     }
   }
@@ -75,18 +79,27 @@ resource "proxmox_virtual_environment_vm" "node" {
   }
 
   network_device {
-    model  = "virtio"
-    bridge = var.bridge
+    model       = "virtio"
+    bridge      = var.bridge
+    mac_address = format("bc:24:11:%s", var.mac_address)
   }
 
   cdrom {
-    enabled   = var.iso_path != null ? true : false
-    file_id   = var.iso_path
+    enabled   = true
+    file_id   = var.iso_path != null ? var.iso_path : "none"
     interface = "ide0"
   }
 
   vga {
     type   = "std"
     memory = 16
+  }
+}
+
+resource "null_resource" "wait_for_node_to_be_ready" {
+  depends_on = [ proxmox_virtual_environment_vm.node ]
+
+  provisioner "local-exec" {
+    command = "kubectl wait --for=condition=Ready node ${var.kube_node_name}"
   }
 }
