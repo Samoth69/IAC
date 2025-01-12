@@ -45,7 +45,7 @@ module "talos-node" {
   target_node     = each.value.node
   vmid            = each.value.vmid
   tags            = ["k8s"]
-  iso_path        = "cephfs:iso/talos-v1.9.1-nocloud-amd64.iso"
+  iso_path        = null # "cephfs:iso/talos-v1.9.1-nocloud-amd64.iso"
   timeout_stop_vm = 600
   cpu_cores       = each.value.cpu
   memory          = each.value.memory
