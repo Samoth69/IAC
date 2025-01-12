@@ -95,11 +95,3 @@ resource "proxmox_virtual_environment_vm" "node" {
     memory = 16
   }
 }
-
-resource "null_resource" "wait_for_node_to_be_ready" {
-  depends_on = [ proxmox_virtual_environment_vm.node ]
-
-  provisioner "local-exec" {
-    command = "kubectl wait --for=condition=Ready node ${var.kube_node_name}"
-  }
-}

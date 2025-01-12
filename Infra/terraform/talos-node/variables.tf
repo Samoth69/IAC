@@ -84,7 +84,3 @@ variable "is_master" {
   type    = bool
   default = false
 }
-
-variable "kube_node_name" {
-  type = string
-}
