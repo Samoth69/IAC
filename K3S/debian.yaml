@@ -1,19 +1,46 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: debian
-  namespace: default
+  name: debian-deployment
+  labels:
+    app: debian
 spec:
-  containers:
-  - name: debian
-    image: debian
-    args:
-    - sleep
-    - "1000000"
-    resources:
-      requests:
-        cpu: 20m
-        memory: 20Mi
-      limits:
-        cpu: "1"
-        memory: 1Gi
+  replicas: 1
+  selector:
+    matchLabels:
+      app: debian
+  template:
+    metadata:
+      labels:
+        app: debian
+    spec:
+      containers:
+      - name: debian
+        image: debian
+        imagePullPolicy: Always
+        args:
+        - sleep
+        - infinity
+        resources:
+          requests:
+            cpu: 20m
+            memory: 20Mi
+          limits:
+            cpu: "1"
+            memory: 1Gi  
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/cilium.io/ciliumnetworkpolicy_v2.json
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: debian-network-policy
+spec:
+  endpointSelector:
+    matchLabels:
+      app: debian
+  ingress:
+    # nothing allowed
+    - {}
+  egress:
+    - toEntities:
+        - all
