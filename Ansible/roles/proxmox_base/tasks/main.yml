@@ -82,3 +82,9 @@
     - name: Install pve-fake-subscription
       apt:
         deb: "{{ download.dest }}"
+
+- name: Disable useless services
+  systemd:
+    name: postfix
+    state: stopped
+    enabled: false
