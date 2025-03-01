@@ -49,6 +49,7 @@
     service: "{{item}}"
     state: enabled
   with_items:
+    - https
     - http
     - dns
 
