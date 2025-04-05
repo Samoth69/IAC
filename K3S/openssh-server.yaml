@@ -44,28 +44,28 @@ spec:
             memory: 16Mi
           limits:
             memory: 1Gi
-#         volumeMounts:
-#           - mountPath: /mnt/data
-#             name: mypd
-#       volumes:
-#         - name: mypd
-#           persistentVolumeClaim:
-#             claimName: pvc-openssh
-#             readOnly: true
-# ---
-# # yaml-language-server: $schema=https://github.com/garethr/kubernetes-json-schema/raw/refs/heads/master/v1.14.0-standalone/persistentvolumeclaim.json
-# apiVersion: v1
-# kind: PersistentVolumeClaim
-# metadata:
-#   name: pvc-openssh
-# spec:
-#   storageClassName: csi-rbd-sc
-#   accessModes:
-#   - ReadWriteOnce
-#   resources:
-#     requests:
-#       storage: 40Gi
-#   volumeName: pvc-8c9247cb-4a66-4876-807c-d7bc53a41525
+        volumeMounts:
+          - mountPath: /mnt/data
+            name: mypd
+      volumes:
+        - name: mypd
+          persistentVolumeClaim:
+            claimName: pvc-openssh
+            readOnly: true
+---
+# yaml-language-server: $schema=https://github.com/garethr/kubernetes-json-schema/raw/refs/heads/master/v1.14.0-standalone/persistentvolumeclaim.json
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-openssh
+spec:
+  storageClassName: csi-rbd-sc
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 40Gi
+  volumeName: pvc-d0696dfa-95ea-4546-aa86-eaa99481b35a
 ---
 # yaml-language-server: $schema=https://github.com/garethr/kubernetes-json-schema/raw/refs/heads/master/v1.14.0-standalone-strict/service.json
 apiVersion: v1
@@ -111,4 +111,6 @@ spec:
           protocol: ANY
   egress:
     - toEntities:
-      - ingress
+      - all
+    - toCIDR:
+      - 192.168.0.0/23
