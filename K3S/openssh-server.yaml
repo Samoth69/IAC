@@ -1,0 +1,92 @@
+# yaml-language-server: $schema=https://github.com/garethr/kubernetes-json-schema/raw/refs/heads/master/v1.14.0-standalone/deployment.json
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openssh-deployment
+  labels:
+    app: openssh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openssh
+  template:
+    metadata:
+      labels:
+        app: openssh
+    spec:
+      containers:
+      - name: openssh
+        image: lscr.io/linuxserver/openssh-server:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 2222
+        env:
+          - name: PUID
+            value: "1000"
+          - name: PGID
+            value: "1000"
+          - name: TZ
+            value: Europe/Paris
+          - name: PUBLIC_KEY
+            value: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ0v5vwqohHJ9u2hXHC1fZT00Qz0wLPALSof3D+wQjZZ
+          - name: SUDO_ACCESS
+            value: "true"
+          - name: USER_PASSWORD
+            value: 123+aze
+          - name: USER_NAME
+            value: thomas
+          - name: LOG_STDOUT
+            value: "true"
+        resources:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+          limits:
+            memory: 1Gi
+---
+# yaml-language-server: $schema=https://github.com/garethr/kubernetes-json-schema/raw/refs/heads/master/v1.14.0-standalone-strict/service.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: openssh-service
+  annotations:
+    lbipam.cilium.io/ips: 192.168.1.31
+spec:
+  selector:
+    app: openssh
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 2222
+      targetPort: 2222
+status:
+  loadBalancer:
+    ingress:
+    - ip: 192.168.1.31
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/cilium.io/ciliumnetworkpolicy_v2.json
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: openssh-network-policy
+spec:
+  endpointSelector:
+    matchLabels:
+      app: openssh
+  ingress:
+    - fromEntities:
+      - cluster
+      toPorts:
+      - ports:
+        - port: "2222"
+          protocol: ANY
+    - fromCIDR:
+      - 192.168.0.0/23
+      toPorts:
+      - ports:
+        - port: "2222"
+          protocol: ANY
+  egress:
+    - toEntities:
+      - ingress
