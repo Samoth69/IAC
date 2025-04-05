@@ -44,6 +44,28 @@ spec:
             memory: 16Mi
           limits:
             memory: 1Gi
+#         volumeMounts:
+#           - mountPath: /mnt/data
+#             name: mypd
+#       volumes:
+#         - name: mypd
+#           persistentVolumeClaim:
+#             claimName: pvc-openssh
+#             readOnly: true
+# ---
+# # yaml-language-server: $schema=https://github.com/garethr/kubernetes-json-schema/raw/refs/heads/master/v1.14.0-standalone/persistentvolumeclaim.json
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: pvc-openssh
+# spec:
+#   storageClassName: csi-rbd-sc
+#   accessModes:
+#   - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 40Gi
+#   volumeName: pvc-8c9247cb-4a66-4876-807c-d7bc53a41525
 ---
 # yaml-language-server: $schema=https://github.com/garethr/kubernetes-json-schema/raw/refs/heads/master/v1.14.0-standalone-strict/service.json
 apiVersion: v1
