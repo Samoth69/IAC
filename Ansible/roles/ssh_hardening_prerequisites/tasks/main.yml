@@ -1,4 +1,0 @@
-- name: stat Thomas's authorized_keys
-  stat:
-    path: /home/thomas/.ssh/authorized_keys
-  register: thomas_authorized_keys_file
