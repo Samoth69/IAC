@@ -1,7 +1,6 @@
-# PROXMOX config
-
 # -------------------------------------
 # vzdump (module de sauvegarde des VMs)
+# https://pve.proxmox.com/pve-docs/vzdump.1.html#vzdump_configuration
 # -------------------------------------
 
 # limite de bande passante pour les sauvegardes
