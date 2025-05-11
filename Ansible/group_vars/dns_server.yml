@@ -6,6 +6,7 @@ pihole_folder: "{{config_folder}}/pihole"
 pihole_pihole_folder: "{{pihole_folder}}/pihole"
 pihole_dnsmasqd_folder: "{{pihole_folder}}/dnsmasq.d"
 pihole_password: "{{lookup('env', 'INFRA_PIHOLE_PASSWORD', default=Undefined)}}"
+nebula_sync_webhook: "{{lookup('env', 'INFRA_NEBULA_SYNC', default=Undefined)}}"
 
 ipv4_dns:
   - 1.1.1.1
