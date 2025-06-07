@@ -1,7 +1,1 @@
-ipv4_addresses:
-  - 192.168.5.10/24
-
-ipv6_addresses:
-  - 2a01:e0a:5c9:f0a1:5::10/68
-
 hostname: "LaboDMZ"
