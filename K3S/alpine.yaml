@@ -14,17 +14,11 @@ spec:
       labels:
         app: alpine
     spec:
-      hostUsers: false
+      dnsPolicy: Default
       containers:
       - name: alpine
         image: alpine
         imagePullPolicy: Always
-        securityContext:
-          procMount: Unmasked
-          seccompProfile:
-            type: Unconfined
-          appArmorProfile:
-            type: Unconfined
         args:
         - sleep
         - infinity
