@@ -35,21 +35,23 @@
   apt:
     upgrade: full
     update_cache: true
-    cache_valid_time: 3600
 
 - name: remove old kernels
   apt:
     name:
       - pve-kernel-5.15
       - pve-kernel-5.15.30-2-pve
+      - pve-kernel-5.15.102-1-pve
+      - pve-kernel-5.15.108-1-pve
+      - pve-kernel-6.2
       - proxmox-kernel-6.2
-      - proxmox-kernel-6.11
     state: absent
     autoclean: true
     autoremove: true
 
 - name: install usefull tools
-  package:
+  apt:
+    update_cache: true
     name:
       - htop
       - btop
