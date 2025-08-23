@@ -19,6 +19,13 @@
     filename: pve-no-subscription
     update_cache: false
 
+- name: Add non-free repo
+  apt_repository:
+    repo: deb http://ftp.fr.debian.org/debian {{ ansible_distribution_release }} non-free non-free-firmware
+    state: present
+    filename: debian-non-free
+    update_cache: false
+
 - name: Upgrade all system packages
   apt:
     upgrade: full
@@ -37,8 +44,10 @@
       - lshw
       - lm-sensors
       - fwupdate
+      - amd64-microcode
     state: latest
     install_recommends: true
+    update_cache: true
 
 - name: set vzdump config
   template:
