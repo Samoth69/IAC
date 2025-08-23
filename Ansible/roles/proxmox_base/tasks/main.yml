@@ -1,35 +1,56 @@
-- name: Delete pve enterprise source file
+- name: Remove old files
   file:
-    path: /etc/apt/sources.list.d/pve-enterprise.sources
+    name: "{{ item }}"
     state: absent
+  loop:
+    - /etc/apt/sources.list
+    - /etc/apt/sources.list.d/pve-enterprise.list.dpkg-old
+    - /etc/apt/sources.list.d/ceph.sources
+    - /etc/apt/sources.list.d/debian-non-free.list
+    - /etc/apt/sources.list.d/pve-enterprise.list
+    - /etc/apt/sources.list.d/pve-enterprise.sources
 
-- name: Remove PVE Enterprise repo
-  apt_repository:
-    repo: deb https://enterprise.proxmox.com/debian/pve {{ ansible_distribution_release }} pve-enterprise
-    state: absent
-    filename: pve-enterprise
-    update_cache: false
-
-- name: Remove CEPH PVE Enterprise repo
-  apt_repository:
-    repo: deb https://enterprise.proxmox.com/debian/ceph-quincy {{ ansible_distribution_release }} enterprise
-    state: absent
-    filename: ceph
-    update_cache: false
-
-- name: Add PVE no-subscription repo
-  apt_repository:
-    repo: deb http://download.proxmox.com/debian/pve {{ ansible_distribution_release }} pve-no-subscription
-    state: present
-    filename: pve-no-subscription
-    update_cache: false
-
-- name: Add non-free repo
-  apt_repository:
-    repo: deb http://ftp.fr.debian.org/debian {{ ansible_distribution_release }} non-free non-free-firmware
-    state: present
-    filename: debian-non-free
-    update_cache: false
+- name: Set apt repos
+  deb822_repository:
+    name: "{{ item.name }}"
+    types: deb
+    uris: "{{ item.uris }}"
+    suites: "{{ item.suites }}"
+    components: "{{ item.components }}"
+    signed_by: "{{ item.signed_by }}"
+  loop:
+    - name: debian
+      uris: http://ftp.fr.debian.org/debian/
+      suites:
+        - "{{ ansible_distribution_release }}"
+      components:
+        - main
+        - contrib
+        - non-free
+        - non-free-firmware
+      signed_by: /usr/share/keyrings/debian-archive-keyring.gpg
+    - name: debian-updates
+      uris: http://ftp.fr.debian.org/debian/
+      suites:
+        - "{{ ansible_distribution_release }}-updates"
+      components:
+        - main
+        - contrib
+      signed_by: /usr/share/keyrings/debian-archive-keyring.gpg
+    - name: debian-security
+      uris: http://ftp.fr.debian.org/debian-security/
+      suites:
+        - "{{ ansible_distribution_release }}-security"
+      components:
+        - main
+        - contrib
+      signed_by: /usr/share/keyrings/debian-archive-keyring.gpg
+    - name: proxmox
+      uris: http://download.proxmox.com/debian/pve/
+      suites: "{{ ansible_distribution_release }}"
+      components:
+        - pve-no-subscription
+      signed_by: /usr/share/keyrings/proxmox-archive-keyring.gpg
 
 - name: Upgrade all system packages
   apt:
