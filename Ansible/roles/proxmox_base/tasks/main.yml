@@ -82,6 +82,7 @@
       - lm-sensors
       - fwupdate
       - amd64-microcode
+      - podman
     state: latest
 
 - name: set vzdump config
@@ -132,3 +133,15 @@
     name: postfix
     state: stopped
     enabled: false
+
+- name: install smartctl-exporter
+  copy:
+    src: files/smartctl-exporter.container
+    dest: /etc/containers/systemd/smartctl-exporter.container
+
+- name: start smartctl-exporter
+  systemd:
+    name: smartctl-exporter
+    state: started
+    daemon_reload: true
+    enabled: true
